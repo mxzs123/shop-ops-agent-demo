@@ -1,0 +1,44 @@
+{
+  "name": "shop-ops-agent-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.12.2",
+  "scripts": {
+    "dev": "next dev --hostname ${ADMIN_AGENT_HOST:-127.0.0.1} --port ${ADMIN_AGENT_PORT:-18083}",
+    "build": "NEXT_DIST_DIR=.next-build next build",
+    "start": "NEXT_DIST_DIR=${NEXT_DIST_DIR:-.next-build} next start --hostname ${ADMIN_AGENT_HOST:-127.0.0.1} --port ${ADMIN_AGENT_PORT:-18083}",
+    "test": "node scripts/test-admin-agent.mjs && tsx scripts/test-message-context.ts && tsx scripts/test-confirmation.ts && tsx scripts/test-admin-client-timeout.ts && tsx scripts/test-admin-client-login.ts && tsx scripts/test-model-provider.ts && tsx scripts/test-ui-adapters.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.0",
+    "@ai-sdk/react": "^3.0.193",
+    "@streamdown/cjk": "^1.0.3",
+    "@streamdown/code": "^1.1.1",
+    "@streamdown/math": "^1.0.2",
+    "@streamdown/mermaid": "^1.0.2",
+    "ai": "^6.0.191",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "next": "^15.5.9",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "shadow-plugin": "^2.1.1",
+    "streamdown": "^2.5.0",
+    "tailwind-merge": "^3.6.0",
+    "use-stick-to-bottom": "^1.1.4",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.14",
+    "@types/node": "24.6.1",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.14",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.3"
+  }
+}

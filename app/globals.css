@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@import "./bui/foundation.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans", "Noto Sans CJK SC", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  /* Keep the root at the browser's 16px: Tailwind spacing and the vendored
+     Beautiful UI components are rem-based and assume it. Body copy is set
+     to 14px here instead. */
+  html,
+  body {
+    min-height: 100dvh;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  body {
+    font-size: 14px;
+    letter-spacing: -0.005em;
+    line-height: 1.5;
+  }
+}
+
+/* Conversation motion: one shared entrance curve keeps the chat cycle
+   (bubbles, tool cards, notices) feeling coherent instead of popping in. */
+@keyframes chat-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.msg-enter {
+  animation: chat-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.tool-card-enter {
+  animation: chat-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-enter,
+  .tool-card-enter {
+    animation: none;
+  }
+}
+
+@layer components {
+  .is-assistant .agent-markdown {
+    color: var(--ink);
+    font-size: 14.5px;
+    line-height: 1.75;
+    letter-spacing: 0;
+  }
+
+  .is-assistant .agent-markdown > :not(:last-child) {
+    margin-block-end: 0.6em;
+  }
+
+  .is-user .agent-markdown {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .is-assistant .agent-markdown p {
+    margin-block: 0;
+    line-height: 1.75;
+  }
+
+  .is-assistant .agent-markdown h1,
+  .is-assistant .agent-markdown h2,
+  .is-assistant .agent-markdown h3,
+  .is-assistant .agent-markdown h4 {
+    margin-block: 0.95em 0.25em;
+    color: var(--ink);
+    font-size: 1.05em;
+    font-weight: 700;
+    line-height: 1.55;
+    letter-spacing: 0;
+  }
+
+  .is-assistant .agent-markdown h1:first-child,
+  .is-assistant .agent-markdown h2:first-child,
+  .is-assistant .agent-markdown h3:first-child,
+  .is-assistant .agent-markdown h4:first-child {
+    margin-top: 0;
+  }
+
+  .is-assistant .agent-markdown ul,
+  .is-assistant .agent-markdown ol {
+    margin-block: 0.2em 0.75em;
+    padding-left: 1.25em;
+    line-height: 1.7;
+    list-style-position: outside;
+  }
+
+  .is-assistant .agent-markdown h1 + ul,
+  .is-assistant .agent-markdown h1 + ol,
+  .is-assistant .agent-markdown h2 + ul,
+  .is-assistant .agent-markdown h2 + ol,
+  .is-assistant .agent-markdown h3 + ul,
+  .is-assistant .agent-markdown h3 + ol,
+  .is-assistant .agent-markdown h4 + ul,
+  .is-assistant .agent-markdown h4 + ol {
+    margin-block-start: 0.1em;
+  }
+
+  .is-assistant .agent-markdown li {
+    margin-block: 0.18em;
+    padding-left: 0.1em;
+    line-height: 1.7;
+  }
+
+  .is-assistant .agent-markdown li::marker {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .is-assistant .agent-markdown strong,
+  .is-assistant .agent-markdown b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .is-assistant .agent-markdown blockquote {
+    margin: 0.85em 0;
+    border-left: 2px solid var(--line-strong);
+    padding-left: 0.85em;
+    color: var(--ink-2);
+  }
+
+  .agent-markdown [data-streamdown="table-wrapper"] {
+    margin: 0.75em 0;
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .agent-markdown [data-streamdown="table-wrapper"] > div {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow-x: auto;
+  }
+
+  .agent-markdown [data-streamdown="table"] {
+    width: 100%;
+    min-width: 34em;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  .agent-markdown [data-streamdown="table-header"] {
+    background: transparent;
+  }
+
+  .agent-markdown [data-streamdown="table-body"] {
+    border: 0;
+  }
+
+  .agent-markdown [data-streamdown="table-row"] {
+    border: 0;
+  }
+
+  .agent-markdown [data-streamdown="table-header-cell"] {
+    border-bottom: 1px solid var(--line);
+    padding: 0.55em 0.75em;
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .agent-markdown [data-streamdown="table-cell"] {
+    border-bottom: 1px solid var(--line-soft);
+    padding: 0.7em 0.75em;
+    background: transparent;
+    color: var(--ink);
+    line-height: 1.45;
+    vertical-align: middle;
+    word-break: break-word;
+  }
+
+  .agent-markdown [data-streamdown="table-cell"]:first-child {
+    font-weight: 700;
+    color: var(--ink);
+  }
+}
