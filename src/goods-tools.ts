@@ -204,7 +204,7 @@ export async function searchGoods(
     payload,
     auth,
   );
-  assertOk(response, "商品检索失败");
+  assertOk(response, "商品の検索に失敗しました");
 
   return normalizeSearchResponse(response);
 }
@@ -220,13 +220,13 @@ export async function getEditableGoods(
     {},
     auth,
   );
-  assertOk(response, "商品详情获取失败");
+  assertOk(response, "商品詳細の取得に失敗しました");
 
   const data = isRecord(response.data) ? response.data : {};
   const model = firstRecord(data.model, data.goods, data);
 
   if (!model || model.id === undefined) {
-    throw new AdminApiError("商品详情响应缺少 model.id", 502, {
+    throw new AdminApiError("商品詳細のレスポンスに model.id がありません", 502, {
       keys: Object.keys(data),
     });
   }
@@ -324,12 +324,12 @@ export async function createGoodsFilterEditPlan(
   const matched = await searchAllGoods(client, auth, selector);
 
   if (matched.length === 0) {
-    throw new AdminApiError("没有找到符合条件的商品，无法生成批量预览", 404);
+    throw new AdminApiError("条件に合う商品が見つからないため、一括プレビューを作成できません", 404);
   }
 
   if (matched.length > maxItems) {
     throw new AdminApiError(
-      `符合条件的商品有 ${matched.length} 个，超过本次上限 ${maxItems} 个。请缩小筛选范围。`,
+      `条件に合う商品が ${matched.length} 件あり、今回の上限 ${maxItems} 件を超えています。絞り込み条件を狭めてください。`,
       400,
     );
   }
@@ -352,7 +352,7 @@ export async function createGoodsFilterEditPlan(
       extraWarnings: [
         warning(
           WARNING_CODES.batchAllNoop,
-          "所有匹配商品已是目标值，无需执行。",
+          "該当する商品はすべて目標値になっているため、実行は不要です。",
         ),
       ],
       plannedItems: [],
@@ -414,7 +414,7 @@ export async function createGoodsBatchCreatePlan(
           : [
               warning(
                 WARNING_CODES.createNonePlannable,
-                "没有可录入的商品。",
+                "登録できる商品がありません。",
               ),
             ],
       plannedItems: [],
@@ -459,7 +459,7 @@ function createGoodsCreatePlanFromPatch(patch: GoodsPatch): GoodsEditPlan {
     changes,
     confirmRequired: true,
     patch,
-    target: summarizeGoods({ ...payload.payload.goods, id: "新商品" }),
+    target: summarizeGoods({ ...payload.payload.goods, id: "新規商品" }),
     warnings: payload.warnings,
   };
 }
@@ -481,7 +481,7 @@ export async function createGoodsDeletePlan(
     warnings: [
       warning(
         WARNING_CODES.deletePermanent,
-        "删除会永久移除商品及 SKU 数据，请确认目标无误。",
+        "削除すると商品と SKU のデータが完全に失われます。対象に間違いがないか確認してください。",
       ),
     ],
   };
@@ -521,7 +521,7 @@ export async function createGoodsBatchDeletePlan(
     extraWarnings: [
       warning(
         WARNING_CODES.deletePermanent,
-        "删除会永久移除商品及 SKU 数据，请确认目标无误。",
+        "削除すると商品と SKU のデータが完全に失われます。対象に間違いがないか確認してください。",
       ),
     ],
     plannedItems: items,
@@ -540,12 +540,12 @@ function normalizeDeleteIds(input: unknown): Array<string | number> {
       : [];
 
   if (rawIds.length === 0) {
-    throw new AdminApiError("缺少商品 id", 400);
+    throw new AdminApiError("商品 ID がありません", 400);
   }
 
   if (rawIds.length > DIRECT_BATCH_OPERATION_LIMIT) {
     throw new AdminApiError(
-      `单次批量删除最多支持 ${DIRECT_BATCH_OPERATION_LIMIT} 个商品`,
+      `一括削除は 1 回につき最大 ${DIRECT_BATCH_OPERATION_LIMIT} 件までです`,
       400,
     );
   }
@@ -571,7 +571,7 @@ export async function executeGoodsEdit(
 ): Promise<GoodsEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   // Same read → assert → diff → write pipeline as batch items; the only
@@ -583,7 +583,7 @@ export async function executeGoodsEdit(
   });
 
   if (skipped) {
-    throw new AdminApiError("当前商品已经是预览中的值，无需执行", 409);
+    throw new AdminApiError("商品はすでにプレビューの値になっているため、実行は不要です", 409);
   }
 
   return result;
@@ -596,7 +596,7 @@ export async function executeGoodsCreate(
 ): Promise<GoodsEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const patch = normalizeGoodsCreateInput(input);
@@ -610,7 +610,7 @@ export async function executeGoodsCreate(
     auth,
   );
   invalidateBnScanCache();
-  assertOk(response, "商品录入执行失败");
+  assertOk(response, "商品の登録に失敗しました");
 
   const createdId = extractCreatedGoodsId(response.data);
   const resolvedTarget =
@@ -622,27 +622,27 @@ export async function executeGoodsCreate(
     warnings.push(
       warning(
         WARNING_CODES.createIdRefetched,
-        "Admin 未返回新商品 ID，已按商品编码回读确认。",
+        "Admin が新規商品の ID を返さなかったため、商品コードで読み直して確認しました。",
       ),
     );
   } else if (createdId === undefined) {
     warnings.push(
       warning(
         WARNING_CODES.createIdMissing,
-        "Admin 未返回新商品 ID，请用商品编码检索确认。",
+        "Admin が新規商品の ID を返しませんでした。商品コードで検索して確認してください。",
       ),
     );
   }
 
   return {
-    adminMessage: response.msg ?? "录入成功",
+    adminMessage: response.msg ?? "登録しました",
     changes,
     result: response.data,
     target:
       resolvedTarget ??
       summarizeGoods({
         ...payload.payload.goods,
-        id: createdId ?? "新商品",
+        id: createdId ?? "新規商品",
       }),
     warnings,
   };
@@ -655,7 +655,7 @@ export async function executeGoodsDelete(
 ): Promise<GoodsEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const id = extractGoodsId(request);
@@ -669,10 +669,10 @@ export async function executeGoodsDelete(
     auth,
   );
   invalidateBnScanCache();
-  assertOk(response, "商品删除执行失败");
+  assertOk(response, "商品の削除に失敗しました");
 
   return {
-    adminMessage: response.msg ?? "删除成功",
+    adminMessage: response.msg ?? "削除しました",
     changes: buildDeleteChanges(),
     result: response.data,
     target: summarizeGoods(state.model),
@@ -687,14 +687,14 @@ export async function executeGoodsBatchEdit(
 ): Promise<GoodsBatchEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const previewId =
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   const preview = previewId ? await readBulkEditPreview(previewId) : undefined;
   if (previewId && !preview) {
-    throw new AdminApiError("批量预览不存在或已过期，请重新生成", 409);
+    throw new AdminApiError("一括プレビューが存在しないか期限切れです。作成し直してください", 409);
   }
 
   const operations = preview?.operations ?? normalizeBatchOperations(request);
@@ -702,7 +702,7 @@ export async function executeGoodsBatchEdit(
     client,
     auth,
     operations,
-    "批量执行完成",
+    "一括実行が完了",
     preview?.selector,
   );
 }
@@ -714,25 +714,25 @@ export async function executeGoodsFilterEdit(
 ): Promise<GoodsBatchEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const previewId =
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   if (!previewId) {
-    throw new AdminApiError("缺少批量预览 ID", 400);
+    throw new AdminApiError("一括プレビューの ID がありません", 400);
   }
 
   const preview = await readBulkEditPreview(previewId);
   if (!preview) {
-    throw new AdminApiError("批量预览不存在或已过期，请重新生成", 409);
+    throw new AdminApiError("一括プレビューが存在しないか期限切れです。作成し直してください", 409);
   }
 
   return runBatchEditOperations(
     client,
     auth,
     preview.operations,
-    "筛选批量执行完成",
+    "条件指定の一括実行が完了",
     preview.selector,
   );
 }
@@ -773,14 +773,14 @@ export async function executeGoodsBatchCreate(
 ): Promise<GoodsBatchEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const previewId =
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   const preview = previewId ? await readBulkCreatePreview(previewId) : undefined;
   if (previewId && !preview) {
-    throw new AdminApiError("批量录入预览不存在或已过期，请重新生成", 409);
+    throw new AdminApiError("一括登録プレビューが存在しないか期限切れです。作成し直してください", 409);
   }
 
   const operations =
@@ -800,14 +800,14 @@ export async function executeGoodsBatchCreate(
   const skippedCount = existingCount + result.skippedCount;
 
   return buildBatchExecutionResponse(
-    "批量录入完成",
+    "一括登録が完了",
     operations.length,
     { ...result, skippedCount },
     existingCount > 0
       ? [
           warning(
             WARNING_CODES.createExistingBnSkipped,
-            `${existingCount} 个商品编码已存在，本次批量录入已跳过。`,
+            `商品コード ${existingCount} 件はすでに存在するため、今回の一括登録ではスキップしました。`,
           ),
         ]
       : [],
@@ -821,18 +821,18 @@ export async function executeGoodsBatchDelete(
 ): Promise<GoodsBatchEditExecution> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const previewId =
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   if (!previewId) {
-    throw new AdminApiError("缺少批量预览 ID", 400);
+    throw new AdminApiError("一括プレビューの ID がありません", 400);
   }
 
   const preview = await readBulkPreview(previewId);
   if (!preview || preview.kind !== "goods.batchDelete") {
-    throw new AdminApiError("删除预览不存在或已过期，请重新生成", 409);
+    throw new AdminApiError("削除プレビューが存在しないか期限切れです。作成し直してください", 409);
   }
 
   return runBatchDeleteOperations(client, auth, preview);
@@ -857,7 +857,7 @@ async function runBatchDeleteOperations(
   );
 
   return buildBatchExecutionResponse(
-    "批量删除完成",
+    "一括削除が完了",
     preview.operations.length,
     result,
   );
@@ -879,25 +879,25 @@ export async function executeGoodsPreview(
 ): Promise<{ kind: GoodsPreviewKind; result: GoodsBatchEditExecution }> {
   const request = isRecord(input) ? input : {};
   if (request.confirm !== true) {
-    throw new AdminApiError("执行前必须显式传入 confirm: true", 400);
+    throw new AdminApiError("実行前に confirm: true を明示的に渡す必要があります", 400);
   }
 
   const previewId =
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   if (!previewId) {
     throw new AdminApiError(
-      "缺少预览 ID。请先生成预览，等待用户确认后再执行。",
+      "プレビュー ID がありません。先にプレビューを作成し、ユーザーの確認を待ってから実行してください。",
       400,
     );
   }
 
   if (executingPreviewIds.has(previewId)) {
-    throw new AdminApiError("此预览正在执行，请等待完成", 409);
+    throw new AdminApiError("このプレビューは実行中です。完了までお待ちください", 409);
   }
 
   const preview = await readBulkPreview(previewId);
   if (!preview) {
-    throw new AdminApiError("预览不存在或已过期，请重新生成", 409);
+    throw new AdminApiError("プレビューが存在しないか期限切れです。作成し直してください", 409);
   }
 
   executingPreviewIds.add(previewId);
@@ -955,7 +955,7 @@ async function createGoodsEditPlans(
     // a slow Admin fails fast instead of exhausting the route's 300 s cap.
     if (Date.now() >= deadline) {
       throw new AdminApiError(
-        "预览生成已达到执行时间上限，请缩小筛选范围以减少目标数量",
+        "プレビュー作成が時間の上限に達しました。絞り込み条件を狭めて対象を減らしてください",
         504,
       );
     }
@@ -1137,7 +1137,7 @@ async function executeGoodsEditForBatch(
   if (changes.length === 0) {
     return {
       result: {
-        adminMessage: "已是目标值，跳过",
+        adminMessage: "目標値のためスキップ",
         changes: [],
         result: null,
         target: summarizeGoods(current),
@@ -1156,11 +1156,11 @@ async function executeGoodsEditForBatch(
   if (operation.patch.bn !== undefined) {
     invalidateBnScanCache();
   }
-  assertOk(response, "商品编辑执行失败");
+  assertOk(response, "商品の編集に失敗しました");
 
   return {
     result: {
-      adminMessage: response.msg ?? "执行成功",
+      adminMessage: response.msg ?? "実行しました",
       changes,
       result: response.data,
       target: summarizeGoods(payload.payload.goods),
@@ -1191,7 +1191,7 @@ async function executeNativeMarketableBatch(
     try {
       const current = rowsById.get(String(operation.id));
       if (!current) {
-        throw new AdminApiError("商品数据已变化，请重新生成预览", 409, {
+        throw new AdminApiError("商品データが変更されています。プレビューを作成し直してください", 409, {
           id: operation.id,
         });
       }
@@ -1210,7 +1210,7 @@ async function executeNativeMarketableBatch(
           index,
           operation,
           result: {
-            adminMessage: "已是目标值，跳过",
+            adminMessage: "目標値のためスキップ",
             changes: [],
             result: null,
             target: current,
@@ -1225,7 +1225,7 @@ async function executeNativeMarketableBatch(
         index,
         operation,
         result: {
-          adminMessage: "执行成功",
+          adminMessage: "実行しました",
           changes,
           result: null,
           target: {
@@ -1270,7 +1270,7 @@ async function executeNativeMarketableBatch(
         { id: chunk.map((item) => item.operation.id) },
         auth,
       );
-      assertOk(response, "批量上下架执行失败");
+      assertOk(response, "公開・非公開の一括切り替えに失敗しました");
       for (const item of chunk) {
         successfulIndexes.add(item.index);
       }
@@ -1392,7 +1392,7 @@ async function executeBatchOperations<TOperation>(
       if (Date.now() >= deadline) {
         return {
           error: new AdminApiError(
-            "因达到执行时间上限而未执行，请为剩余目标重新生成预览后再执行",
+            "時間の上限に達したため実行されませんでした。残りの対象についてプレビューを作成し直してから実行してください",
             503,
           ),
           index,
@@ -1441,7 +1441,7 @@ function toBatchFailure(
 ): GoodsBatchExecutionFailure {
   const record = isRecord(operation) ? operation : {};
   return {
-    error: error instanceof Error ? error.message : "执行失败",
+    error: error instanceof Error ? error.message : "実行に失敗しました",
     id:
       typeof record.id === "string" || typeof record.id === "number"
         ? record.id
@@ -1460,7 +1460,7 @@ function buildBatchAdminMessage(
     skippedCount: number;
   },
 ): string {
-  return `${prefix}：成功 ${result.items.length} 件 · 跳过 ${result.skippedCount} 件 · 失败 ${result.failures.length} 件`;
+  return `${prefix}：成功 ${result.items.length} 件 · スキップ ${result.skippedCount} 件 · 失敗 ${result.failures.length} 件`;
 }
 
 /**
@@ -1523,7 +1523,7 @@ function noopSkippedWarnings(skippedCount: number): ToolWarning[] {
     ? [
         warning(
           WARNING_CODES.batchNoopSkipped,
-          `${skippedCount} 件已是目标值，执行时将跳过。`,
+          `${skippedCount} 件はすでに目標値のため、実行時にスキップします。`,
         ),
       ]
     : [];
@@ -1534,7 +1534,7 @@ function duplicateBnSkippedWarnings(skippedCount: number): ToolWarning[] {
     ? [
         warning(
           WARNING_CODES.createDuplicateBnSkipped,
-          `${skippedCount} 个商品编码已存在或在本次录入中重复，已从执行目标中排除。`,
+          `商品コード ${skippedCount} 件はすでに存在するか今回の登録内で重複しているため、実行対象から除外しました。`,
         ),
       ]
     : [];
@@ -1685,7 +1685,7 @@ function buildCreatePayload(patch: GoodsPatch): {
     warnings: [
       warning(
         WARNING_CODES.createSingleSkuDefault,
-        "录入将创建单 SKU 默认货品。",
+        "登録すると、単一 SKU の既定品目が作成されます。",
       ),
     ],
   };
@@ -1705,7 +1705,7 @@ function applyPatchToProducts(
   const safeIndex = findDefaultProductIndex(products);
   const target = products[safeIndex];
   if (!target) {
-    throw new AdminApiError("默认 SKU 货品不存在，无法执行商品货品字段修改", 502);
+    throw new AdminApiError("既定の SKU 品目が存在しないため、品目の項目を変更できません", 502);
   }
 
   for (const [field, value] of mirroredEntries) {
@@ -1716,7 +1716,7 @@ function applyPatchToProducts(
     ? [
         warning(
           WARNING_CODES.editMultiSkuDefaultOnly,
-          "多 SKU 商品仅修改默认 SKU，其他 SKU 请手动核对。",
+          "複数 SKU の商品では既定の SKU だけを変更します。ほかの SKU は手動で確認してください。",
         ),
       ]
     : [];
@@ -1741,7 +1741,7 @@ function buildCurrentEditableModel(
     const value = product[productField];
     if (value === undefined) {
       throw new AdminApiError(
-        `默认 SKU 货品缺少字段：${fieldLabel(field)}`,
+        `既定の SKU 品目に項目がありません：${fieldLabel(field)}`,
         502,
         { field, productField },
       );
@@ -1758,7 +1758,7 @@ function getDefaultProduct(products: unknown[]): Record<string, unknown> {
   const index = findDefaultProductIndex(records);
   const product = records[index];
   if (!product) {
-    throw new AdminApiError("默认 SKU 货品不存在，无法读取商品货品字段", 502);
+    throw new AdminApiError("既定の SKU 品目が存在しないため、品目の項目を読み取れません", 502);
   }
 
   return product;
@@ -1766,7 +1766,7 @@ function getDefaultProduct(products: unknown[]): Record<string, unknown> {
 
 function findDefaultProductIndex(products: Record<string, unknown>[]): number {
   if (products.length === 0) {
-    throw new AdminApiError("商品没有返回 SKU 货品列表，无法处理货品字段", 502);
+    throw new AdminApiError("商品の SKU 品目一覧が返されなかったため、品目の項目を処理できません", 502);
   }
 
   const defaultIndex = products.findIndex((product) =>
@@ -1780,7 +1780,7 @@ function findDefaultProductIndex(products: Record<string, unknown>[]): number {
     return 0;
   }
 
-  throw new AdminApiError("多 SKU 商品未找到默认货品，无法处理货品字段", 502);
+  throw new AdminApiError("複数 SKU の商品で既定の品目が見つからないため、品目の項目を処理できません", 502);
 }
 
 function productFieldForGoodsField(field: string): string {
@@ -1789,7 +1789,7 @@ function productFieldForGoodsField(field: string): string {
 
 function normalizeGoodsPatch(value: unknown): GoodsPatch {
   if (!isRecord(value)) {
-    throw new AdminApiError("patch 必须是对象", 400);
+    throw new AdminApiError("patch はオブジェクトである必要があります", 400);
   }
 
   const patch: GoodsPatch = {};
@@ -1798,14 +1798,14 @@ function normalizeGoodsPatch(value: unknown): GoodsPatch {
       continue;
     }
     if (!editableFieldSet.has(field)) {
-      throw new AdminApiError(`不允许修改字段: ${field}`, 400);
+      throw new AdminApiError(`変更が許可されていない項目です: ${field}`, 400);
     }
 
     patch[field] = normalizePatchValue(field, rawValue);
   }
 
   if (Object.keys(patch).length === 0) {
-    throw new AdminApiError("patch 不能为空", 400);
+    throw new AdminApiError("patch を空にすることはできません", 400);
   }
 
   return patch;
@@ -1819,26 +1819,26 @@ function normalizeGoodsCreateInput(input: unknown): GoodsPatch {
     const value = patch[field];
     if (value === undefined || value === null || String(value).trim() === "") {
       throw new AdminApiError(
-        `录入商品缺少必填字段：${fieldLabel(field)}`,
+        `登録する商品に必須項目がありません：${fieldLabel(field)}`,
         400,
       );
     }
   }
 
   if (Number(patch.goodsCategoryId) < 1) {
-    throw new AdminApiError("商品分类必须是有效的分类 ID", 400);
+    throw new AdminApiError("カテゴリは有効なカテゴリ ID で指定してください", 400);
   }
 
   if (Number(patch.price) < 0) {
-    throw new AdminApiError("销售价不能小于 0", 400);
+    throw new AdminApiError("販売価格を 0 未満にすることはできません", 400);
   }
 
   if (Number(patch.stock) < 0) {
-    throw new AdminApiError("库存不能小于 0", 400);
+    throw new AdminApiError("在庫を 0 未満にすることはできません", 400);
   }
 
   if (Number(patch.weight) <= 0) {
-    throw new AdminApiError("重量必须大于 0", 400);
+    throw new AdminApiError("重量は 0 より大きい必要があります", 400);
   }
 
   if (patch.sn === undefined || String(patch.sn).trim() === "") {
@@ -1846,11 +1846,11 @@ function normalizeGoodsCreateInput(input: unknown): GoodsPatch {
   }
 
   if (!String(patch.sn).startsWith("SN")) {
-    throw new AdminApiError("货品货号必须以 SN 开头", 400);
+    throw new AdminApiError("品目番号は SN で始まる必要があります", 400);
   }
 
   if (patch.openSpec !== undefined && Number(patch.openSpec) !== 0) {
-    throw new AdminApiError("商品录入当前只支持单 SKU，openSpec 必须为 0", 400);
+    throw new AdminApiError("商品登録は現在単一 SKU のみ対応しています。openSpec は 0 にしてください", 400);
   }
 
   return patch;
@@ -1872,7 +1872,7 @@ function buildProductSn(bn: unknown): string {
 
   if (!normalized) {
     throw new AdminApiError(
-      "商品编码必须包含可用于生成货品货号的英文或数字",
+      "商品コードには、品目番号の生成に使える英数字を含めてください",
       400,
     );
   }
@@ -1893,19 +1893,19 @@ function normalizeBatchOperations(input: unknown): Array<{
       : [];
 
   if (rawOperations.length === 0) {
-    throw new AdminApiError("批量操作不能为空", 400);
+    throw new AdminApiError("一括操作を空にすることはできません", 400);
   }
 
   if (rawOperations.length > DIRECT_BATCH_OPERATION_LIMIT) {
     throw new AdminApiError(
-      `单次批量操作最多支持 ${DIRECT_BATCH_OPERATION_LIMIT} 个商品`,
+      `一括操作は 1 回につき最大 ${DIRECT_BATCH_OPERATION_LIMIT} 件までです`,
       400,
     );
   }
 
   return rawOperations.map((operation, index) => {
     if (!isRecord(operation)) {
-      throw new AdminApiError(`第 ${index + 1} 个批量操作格式错误`, 400);
+      throw new AdminApiError(`${index + 1} 番目の一括操作の形式が正しくありません`, 400);
     }
 
     return {
@@ -1930,12 +1930,12 @@ function normalizeBatchCreateOperations(input: unknown): Array<{
         : [];
 
   if (rawItems.length === 0) {
-    throw new AdminApiError("批量录入不能为空", 400);
+    throw new AdminApiError("一括登録を空にすることはできません", 400);
   }
 
   if (rawItems.length > DIRECT_BATCH_OPERATION_LIMIT) {
     throw new AdminApiError(
-      `单次批量录入最多支持 ${DIRECT_BATCH_OPERATION_LIMIT} 个商品`,
+      `一括登録は 1 回につき最大 ${DIRECT_BATCH_OPERATION_LIMIT} 件までです`,
       400,
     );
   }
@@ -1950,7 +1950,7 @@ function normalizeBatchCreateOperations(input: unknown): Array<{
     } catch (error) {
       if (error instanceof AdminApiError) {
         throw new AdminApiError(
-          `第 ${index + 1} 个录入商品格式错误：${error.message}`,
+          `${index + 1} 番目の登録商品の形式が正しくありません：${error.message}`,
           error.status,
           error.details,
         );
@@ -2013,7 +2013,7 @@ function normalizePatchValue(field: string, value: unknown): GoodsPatchValue {
 
   const text = value === null ? "" : String(value);
   if (requiredStringFields.has(field) && text.trim().length === 0) {
-    throw new AdminApiError(`${field} 不能为空`, 400);
+    throw new AdminApiError(`${field} を空にすることはできません`, 400);
   }
 
   return requiredStringFields.has(field) ? text.trim() : text;
@@ -2027,7 +2027,7 @@ function normalizeMediaPatchValue(field: string, value: unknown): string {
   const paths = splitAssetList(value);
   if (paths.length === 0) {
     throw new AdminApiError(
-      `${field} 必须使用 /upload/... 路径或上传资源 URL`,
+      `${field} には /upload/... のパスかアップロード済みリソースの URL を指定してください`,
       400,
     );
   }
@@ -2077,8 +2077,8 @@ function buildCreateChanges(patch: GoodsPatch): EditChange[] {
 function buildDeleteChanges(): EditChange[] {
   return [
     {
-      after: "删除",
-      before: "保留",
+      after: "削除",
+      before: "保持",
       field: "delete",
       label: "操作",
     },
@@ -2098,7 +2098,7 @@ function buildWarnings(
     warnings.push(
       warning(
         WARNING_CODES.editMultiSkuDefaultOnly,
-        "该商品存在多个 SKU，执行时只会同步默认货品。",
+        "この商品には複数の SKU があります。実行時は既定の品目だけを同期します。",
       ),
     );
   }
@@ -2107,7 +2107,7 @@ function buildWarnings(
     warnings.push(
       warning(
         WARNING_CODES.editCategoryNav,
-        "分类变更会影响前台导航与筛选，请确认分类 ID 正确。",
+        "カテゴリを変更するとストア側のナビゲーションと絞り込みに影響します。カテゴリ ID が正しいか確認してください。",
       ),
     );
   }
@@ -2123,7 +2123,7 @@ function assertExpectedValues(
   // the stale-data check cannot be skipped by omitting expectedChanges.
   if (!Array.isArray(expectedChanges) || expectedChanges.length === 0) {
     throw new AdminApiError(
-      "执行预览缺少 expectedChanges，请重新生成预览后再执行",
+      "実行プレビューに expectedChanges がありません。プレビューを作成し直してから実行してください",
       400,
     );
   }
@@ -2141,7 +2141,7 @@ function assertExpectedValues(
     }));
 
   if (conflicts.length > 0) {
-    throw new AdminApiError("商品数据已变化，请重新生成预览", 409, {
+    throw new AdminApiError("商品データが変更されています。プレビューを作成し直してください", 409, {
       conflicts,
     });
   }
@@ -2155,7 +2155,7 @@ function assertExpectedCreateValues(
   // frozen preview diff.
   if (!Array.isArray(expectedChanges) || expectedChanges.length === 0) {
     throw new AdminApiError(
-      "录入预览缺少 expectedChanges，请重新生成预览后再执行",
+      "登録プレビューに expectedChanges がありません。プレビューを作成し直してから実行してください",
       400,
     );
   }
@@ -2176,7 +2176,7 @@ function assertExpectedCreateValues(
     }));
 
   if (conflicts.length > 0) {
-    throw new AdminApiError("商品录入预览已变化，请重新生成预览", 409, {
+    throw new AdminApiError("商品登録プレビューが変更されています。プレビューを作成し直してください", 409, {
       conflicts,
     });
   }
@@ -2191,16 +2191,16 @@ function assertExpectedDeleteValues(expectedChanges: unknown): void {
     .filter(isRecord)
     .filter((change) => {
       const field = typeof change.field === "string" ? change.field : "";
-      return field === "delete" && change.after !== "删除";
+      return field === "delete" && change.after !== "削除";
     })
     .map((change) => ({
-      expected: "删除",
+      expected: "削除",
       field: change.field,
       received: change.after,
     }));
 
   if (conflicts.length > 0) {
-    throw new AdminApiError("商品删除预览已变化，请重新生成预览", 409, {
+    throw new AdminApiError("商品削除プレビューが変更されています。プレビューを作成し直してください", 409, {
       conflicts,
     });
   }
@@ -2226,7 +2226,7 @@ function assertExpectedTarget(
     }));
 
   if (conflicts.length > 0) {
-    throw new AdminApiError("商品数据已变化，请重新生成删除预览", 409, {
+    throw new AdminApiError("商品データが変更されています。削除プレビューを作成し直してください", 409, {
       conflicts,
     });
   }
@@ -2301,17 +2301,17 @@ function summarizeGoodsDetails(model: Record<string, unknown>) {
     intro: toOptionalString(model.intro),
     usageGuidelines: [
       {
-        body: "请遵照包装说明书或专业药剂师指导使用，切勿超量服用。",
-        title: "用法用量",
+        body: "添付文書または薬剤師の指示に従って使用し、定められた量を超えて服用しないでください。",
+        title: "用法・用量",
       },
       {
         body:
-          note || "如您正处于孕期、哺乳期或有基础疾病，请先咨询医生再行使用。",
-        title: "注意事项",
+          note || "妊娠中・授乳中の方、持病のある方は、使用前に医師にご相談ください。",
+        title: "使用上の注意",
       },
       {
-        body: "置于阴凉干燥处保存，避免阳光直射，并远离儿童可触及的位置。",
-        title: "存储建议",
+        body: "直射日光を避け、涼しく乾燥した場所で、お子様の手の届かないところに保管してください。",
+        title: "保管方法",
       },
     ],
   };
@@ -2350,7 +2350,7 @@ function assertOk(
 
 function extractGoodsId(input: unknown): string | number {
   if (!isRecord(input)) {
-    throw new AdminApiError("缺少商品 id", 400);
+    throw new AdminApiError("商品 ID がありません", 400);
   }
 
   const id = input.id ?? input.targetId;
@@ -2361,7 +2361,7 @@ function extractGoodsId(input: unknown): string | number {
     return id;
   }
 
-  throw new AdminApiError("缺少商品 id", 400);
+  throw new AdminApiError("商品 ID がありません", 400);
 }
 
 function getOptionalString(
@@ -2476,13 +2476,13 @@ function normalizeBoolean(value: unknown): boolean {
     }
   }
 
-  throw new AdminApiError(`无法解析布尔值: ${String(value)}`, 400);
+  throw new AdminApiError(`真偽値として解釈できません: ${String(value)}`, 400);
 }
 
 function normalizeNumber(field: string, value: unknown): number {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
-    throw new AdminApiError(`${field} 必须是数字`, 400);
+    throw new AdminApiError(`${field} は数値である必要があります`, 400);
   }
 
   return parsed;

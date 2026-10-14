@@ -37,14 +37,14 @@ export function useApiKeySettings({
       const nextApiKey = apiKeyDraft.trim();
 
       if (!nextApiKey) {
-        setSettingsMessage("请输入 API Key");
+        setSettingsMessage("API キーを入力してください");
         return;
       }
 
       window.localStorage.setItem(API_KEY_STORAGE_KEY, nextApiKey);
       setApiKey(nextApiKey);
       setApiKeyDraft("");
-      setSettingsMessage("已保存");
+      setSettingsMessage("保存しました");
       clearError();
     },
     [apiKeyDraft, clearError],
@@ -54,7 +54,7 @@ export function useApiKeySettings({
     window.localStorage.removeItem(API_KEY_STORAGE_KEY);
     setApiKey("");
     setApiKeyDraft("");
-    setSettingsMessage("已清除");
+    setSettingsMessage("クリアしました");
     clearError();
   }, [clearError]);
 

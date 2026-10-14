@@ -30,18 +30,18 @@ export async function POST(request: Request) {
     const entries = formData.getAll("files");
 
     if (entries.length === 0) {
-      throw new AdminApiError("请选择图片文件", 400);
+      throw new AdminApiError("画像ファイルを選択してください", 400);
     }
     if (entries.length > MAX_IMAGE_FILES) {
-      throw new AdminApiError(`一次最多上传 ${MAX_IMAGE_FILES} 张图片`, 400);
+      throw new AdminApiError(`一度にアップロードできる画像は最大 ${MAX_IMAGE_FILES} 枚です`, 400);
     }
 
     const files = entries.map((value, index) => {
       if (!(value instanceof File)) {
-        throw new AdminApiError(`第 ${index + 1} 个附件不是文件`, 400);
+        throw new AdminApiError(`${index + 1} 番目の添付はファイルではありません`, 400);
       }
       if (!isImageFile(value)) {
-        throw new AdminApiError(`第 ${index + 1} 个附件不是 image/* 图片`, 400);
+        throw new AdminApiError(`${index + 1} 番目の添付は image/* の画像ではありません`, 400);
       }
 
       return value;
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "图片上传失败",
+        error: error instanceof Error ? error.message : "画像のアップロードに失敗しました",
         ok: false,
       },
       { status: 500 },
@@ -84,11 +84,11 @@ async function uploadToShadowAdmin(
       undefined,
   };
   if (!(adminClient instanceof AdminClient)) {
-    throw new AdminApiError("Shadow Admin 上传传输配置错误", 500);
+    throw new AdminApiError("Shadow Admin のアップロード転送の設定が正しくありません", 500);
   }
   const authorization = await adminClient.resolveAuthorization(auth);
   if (!authorization) {
-    throw new AdminApiError("缺少 Shadow Admin 鉴权，无法上传图片", 401);
+    throw new AdminApiError("Shadow Admin の認証情報がないため、画像をアップロードできません", 401);
   }
   const endpoint = new URL("api/Common/UploadImages", config.webApiBaseUrl);
   const headers: Record<string, string> = {
@@ -110,7 +110,7 @@ async function uploadToShadowAdmin(
           method: "POST",
         });
       } catch (error) {
-        throw new AdminApiError("Shadow WebAPI 图片上传请求失败", 502, {
+        throw new AdminApiError("Shadow WebAPI への画像アップロードに失敗しました", 502, {
           cause: error instanceof Error ? error.message : String(error),
           origin: endpoint.origin,
         });
@@ -122,14 +122,14 @@ async function uploadToShadowAdmin(
       );
       if (!response.ok) {
         throw new AdminApiError(
-          `图片上传接口返回 ${response.status}`,
+          `画像アップロード API が ${response.status} を返しました`,
           response.status,
           scrubUploadDetails(payload),
         );
       }
 
       if (payload.status !== true || payload.code !== 0) {
-        throw new AdminApiError(payload.msg ?? "图片上传失败", 502, {
+        throw new AdminApiError(payload.msg ?? "画像のアップロードに失敗しました", 502, {
           response: scrubUploadDetails(payload),
         });
       }
@@ -173,26 +173,26 @@ function parseUploadPayload(
 ): UploadResponsePayload {
   const normalized = text.replace(/^\ufeff/, "").trim();
   if (!normalized) {
-    throw new AdminApiError(`${context} 返回空响应`, 502);
+    throw new AdminApiError(`${context} が空のレスポンスを返しました`, 502);
   }
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(normalized) as unknown;
   } catch (error) {
-    throw new AdminApiError(`${context} 返回了非 JSON 响应`, 502, {
+    throw new AdminApiError(`${context} が JSON 以外のレスポンスを返しました`, 502, {
       cause: error instanceof Error ? error.message : String(error),
       chars: normalized.length,
     });
   }
 
   if (!isRecord(parsed)) {
-    throw new AdminApiError(`${context} 响应必须是对象`, 502, {
+    throw new AdminApiError(`${context} のレスポンスはオブジェクトである必要があります`, 502, {
       response: describeValueShape(parsed),
     });
   }
   if (typeof parsed.status !== "boolean" || typeof parsed.code !== "number") {
-    throw new AdminApiError(`${context} 响应缺少 status/code`, 502, {
+    throw new AdminApiError(`${context} のレスポンスに status/code がありません`, 502, {
       response: describeValueShape(parsed),
     });
   }
@@ -207,13 +207,13 @@ function parseUploadPayload(
 
 function readUploadFileUrl(data: unknown): string {
   if (!isRecord(data)) {
-    throw new AdminApiError("图片上传响应 data 必须是对象", 502, {
+    throw new AdminApiError("画像アップロードのレスポンスの data はオブジェクトである必要があります", 502, {
       response: describeValueShape(data),
     });
   }
 
   if (typeof data.fileUrl !== "string" || data.fileUrl.trim().length === 0) {
-    throw new AdminApiError("图片上传响应 data.fileUrl 必须是非空字符串", 502, {
+    throw new AdminApiError("画像アップロードのレスポンスの data.fileUrl は空でない文字列である必要があります", 502, {
       response: describeValueShape(data),
     });
   }
@@ -231,7 +231,7 @@ function toUploadPath(value: string): string {
       return normalizedPath;
     }
 
-    throw new AdminApiError("图片上传返回了非 /upload 路径", 502, {
+    throw new AdminApiError("画像アップロードが /upload 以外のパスを返しました", 502, {
       value: trimmed,
     });
   }
@@ -241,7 +241,7 @@ function toUploadPath(value: string): string {
     return normalizedPath;
   }
 
-  throw new AdminApiError("图片上传返回了非 /upload 路径", 502, {
+  throw new AdminApiError("画像アップロードが /upload 以外のパスを返しました", 502, {
     value: trimmed,
   });
 }

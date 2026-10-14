@@ -98,8 +98,8 @@ export class AdminClient implements AdminTransport {
     } catch (error) {
       throw new AdminApiError(
         isAbortError(error)
-          ? "Shadow Admin 请求超时，请确认本地 Admin 服务可用"
-          : "Shadow Admin 请求失败，请确认本地 Admin 服务已启动",
+          ? "Shadow Admin へのリクエストがタイムアウトしました。ローカルの Admin サービスが利用できるか確認してください"
+          : "Shadow Admin へのリクエストに失敗しました。ローカルの Admin サービスが起動しているか確認してください",
         isAbortError(error) ? 504 : 502,
         {
           cause: error instanceof Error ? error.message : String(error),
@@ -172,8 +172,8 @@ export class AdminClient implements AdminTransport {
     } catch (error) {
       throw new AdminApiError(
         isAbortError(error)
-          ? "Shadow Admin 登录请求超时"
-          : "Shadow Admin 登录失败",
+          ? "Shadow Admin へのログインがタイムアウトしました"
+          : "Shadow Admin へのログインに失敗しました",
         isAbortError(error) ? 504 : 502,
         {
           cause: error instanceof Error ? error.message : String(error),
@@ -184,14 +184,14 @@ export class AdminClient implements AdminTransport {
 
     const parsed = parseJson(await response.text());
     if (!response.ok || !isRecord(parsed) || parsed.code !== 0) {
-      throw new AdminApiError("Shadow Admin 登录失败", response.status, {
+      throw new AdminApiError("Shadow Admin へのログインに失敗しました", response.status, {
         details: scrubAdminDetails(parsed),
       });
     }
 
     const tokenData = isRecord(parsed.data) ? parsed.data.token : undefined;
     if (!isRecord(tokenData) || typeof tokenData.token !== "string") {
-      throw new AdminApiError("Shadow Admin 登录响应缺少 token", 502);
+      throw new AdminApiError("Shadow Admin のログインレスポンスに token がありません", 502);
     }
 
     const expiresIn =

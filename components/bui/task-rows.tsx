@@ -64,10 +64,10 @@ export type TaskRow = {
 };
 
 const PILLS: Record<TaskRow["status"], { className: string; label: string } | null> = {
-  done: { className: "bg-green-tint text-green", label: "已完成" },
-  failed: { className: "bg-red-tint text-red", label: "失败" },
+  done: { className: "bg-green-tint text-green", label: "完了" },
+  failed: { className: "bg-red-tint text-red", label: "失敗" },
   running: null,
-  skipped: { className: "bg-hover-2 text-ink-2", label: "已跳过" },
+  skipped: { className: "bg-hover-2 text-ink-2", label: "スキップ" },
 };
 
 export default function TaskRows({ rows }: { rows: TaskRow[] }) {

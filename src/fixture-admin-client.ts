@@ -57,7 +57,7 @@ export class FixtureAdminClient implements AdminTransport {
     this.dataPromise ??= readFile(this.fixturePath, "utf8").then((content) => {
       const parsed = JSON.parse(content) as Partial<FixtureData>;
       if (!Array.isArray(parsed.goods) || !parsed.productsByGoodsId) {
-        throw new AdminApiError("Fixture 数据格式不正确", 500);
+        throw new AdminApiError("Fixture データの形式が正しくありません", 500);
       }
 
       return {
@@ -130,7 +130,7 @@ export class FixtureAdminClient implements AdminTransport {
     const id = extractId(path, payload);
     const goods = data.goods.find((item) => String(item.id) === String(id));
     if (!goods) {
-      return { code: 1, msg: `fixture 商品不存在: ${id}` };
+      return { code: 1, msg: `fixture に商品が存在しません: ${id}` };
     }
 
     const products = this.productsFor(data, goods.id);
@@ -151,7 +151,7 @@ export class FixtureAdminClient implements AdminTransport {
     payload: unknown,
   ): AdminEnvelope<Record<string, unknown>> {
     if (!isRecord(payload) || !isRecord(payload.goods)) {
-      return { code: 1, msg: "fixture payload 缺少 goods" };
+      return { code: 1, msg: "fixture の payload に goods がありません" };
     }
 
     const goodsId = payload.goods.id;
@@ -159,7 +159,7 @@ export class FixtureAdminClient implements AdminTransport {
       (item) => String(item.id) === String(goodsId),
     );
     if (index < 0) {
-      return { code: 1, msg: `fixture 商品不存在: ${String(goodsId)}` };
+      return { code: 1, msg: `fixture に商品が存在しません: ${String(goodsId)}` };
     }
 
     data.goods[index] = {
@@ -177,7 +177,7 @@ export class FixtureAdminClient implements AdminTransport {
     return {
       code: 0,
       data: { id: goodsId },
-      msg: "fixture 写入完成",
+      msg: "fixture への書き込みが完了しました",
     };
   }
 
@@ -186,10 +186,10 @@ export class FixtureAdminClient implements AdminTransport {
     payload: unknown,
   ): AdminEnvelope<Record<string, unknown>> {
     if (!isRecord(payload) || !isRecord(payload.goods)) {
-      return { code: 1, msg: "fixture payload 缺少 goods" };
+      return { code: 1, msg: "fixture の payload に goods がありません" };
     }
     if (!Array.isArray(payload.products) || payload.products.length === 0) {
-      return { code: 1, msg: "fixture payload 缺少 products" };
+      return { code: 1, msg: "fixture の payload に products がありません" };
     }
 
     const goods = { ...payload.goods };
@@ -206,7 +206,7 @@ export class FixtureAdminClient implements AdminTransport {
         goods[field] === undefined || String(goods[field]).trim() === "",
     );
     if (missingField) {
-      return { code: 1, msg: `fixture payload 缺少 ${missingField}` };
+      return { code: 1, msg: `fixture の payload に ${missingField} がありません` };
     }
 
     if (
@@ -214,7 +214,7 @@ export class FixtureAdminClient implements AdminTransport {
         (item) => String(item.bn ?? "") === String(goods.bn ?? ""),
       )
     ) {
-      return { code: 1, msg: `fixture 商品编码已存在: ${String(goods.bn)}` };
+      return { code: 1, msg: `fixture に同じ商品コードがすでに存在します: ${String(goods.bn)}` };
     }
 
     const goodsId = nextNumericId(data.goods, 1000);
@@ -238,7 +238,7 @@ export class FixtureAdminClient implements AdminTransport {
     return {
       code: 0,
       data: { id: goodsId },
-      msg: "fixture 录入完成",
+      msg: "fixture への登録が完了しました",
     };
   }
 
@@ -249,7 +249,7 @@ export class FixtureAdminClient implements AdminTransport {
   ): AdminEnvelope<Record<string, unknown>> {
     const ids = extractIds(payload);
     if (ids.length === 0) {
-      return { code: 1, msg: "fixture 请求缺少 id" };
+      return { code: 1, msg: "fixture へのリクエストに id がありません" };
     }
 
     const missingIds = ids.filter(
@@ -258,7 +258,7 @@ export class FixtureAdminClient implements AdminTransport {
     if (missingIds.length > 0) {
       return {
         code: 1,
-        msg: `fixture 商品不存在: ${missingIds.map(String).join(",")}`,
+        msg: `fixture に商品が存在しません: ${missingIds.map(String).join(",")}`,
       };
     }
 
@@ -276,7 +276,7 @@ export class FixtureAdminClient implements AdminTransport {
     return {
       code: 0,
       data: { count: ids.length },
-      msg: "fixture 批量上下架完成",
+      msg: "fixture の公開・非公開の一括切り替えが完了しました",
     };
   }
 
@@ -289,7 +289,7 @@ export class FixtureAdminClient implements AdminTransport {
       (item) => String(item.id) === String(id),
     );
     if (index < 0) {
-      return { code: 1, msg: `fixture 商品不存在: ${String(id)}` };
+      return { code: 1, msg: `fixture に商品が存在しません: ${String(id)}` };
     }
 
     data.goods.splice(index, 1);
@@ -298,7 +298,7 @@ export class FixtureAdminClient implements AdminTransport {
     return {
       code: 0,
       data: { id },
-      msg: "fixture 删除完成",
+      msg: "fixture からの削除が完了しました",
     };
   }
 
@@ -360,7 +360,7 @@ function extractId(path: string, payload: unknown): string | number {
     }
   }
 
-  throw new AdminApiError("fixture 请求缺少 id", 400);
+  throw new AdminApiError("fixture へのリクエストに id がありません", 400);
 }
 
 function extractIds(payload: unknown): Array<string | number> {

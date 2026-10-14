@@ -122,8 +122,8 @@ export function MessageParts({ mediaBaseUrl, message }: ChatMessageProps) {
       if (part.text.trim()) {
         nodes.push(
           <ThinkingState
-            activeLabel="正在思考"
-            doneLabel="思考过程"
+            activeLabel="考え中"
+            doneLabel="思考の過程"
             key={`reasoning-${index}`}
             working={!(settledFlags[index] ?? false)}
           >
@@ -216,7 +216,7 @@ function MessageFilePart({ part }: { part: FileUIPart }) {
     return (
       <div className="inline-flex max-w-full items-center gap-2 rounded-chip bg-field px-2 py-1.5 text-[12px] font-medium text-ink shadow-hairline">
         <ImageIcon className="size-3.5 shrink-0 text-ink-2" />
-        <span className="truncate">{part.filename ?? "附件"}</span>
+        <span className="truncate">{part.filename ?? "添付ファイル"}</span>
       </div>
     );
   }
@@ -224,7 +224,7 @@ function MessageFilePart({ part }: { part: FileUIPart }) {
   return (
     <div className="overflow-hidden rounded-card bg-surface shadow-card">
       <div
-        aria-label={part.filename ?? "图片附件"}
+        aria-label={part.filename ?? "画像の添付"}
         className="h-72 w-[22rem] max-w-full bg-contain bg-center bg-no-repeat"
         role="img"
         style={{ backgroundImage: `url(${part.url})` }}

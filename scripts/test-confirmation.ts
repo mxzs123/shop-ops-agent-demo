@@ -19,6 +19,13 @@ const confirmed = [
   "ok",
   "OK，执行",
   "好的，没问题",
+  "確認して実行",
+  "はい",
+  "はい、お願いします",
+  "実行してください",
+  "OK です",
+  "問題ありません",
+  "これで進めて",
 ];
 
 const rejected = [
@@ -47,6 +54,14 @@ const rejected = [
   "no",
   "not now",
   "随便看看", // no confirmation word at all
+  "まだ実行しないで",
+  "ちょっと待って",
+  "キャンセル",
+  "やっぱりやめます",
+  "実行はまだです",
+  "いいえ",
+  "もう一度確認したい",
+  "見ているだけです", // no confirmation word at all
 ];
 
 for (const text of confirmed) {

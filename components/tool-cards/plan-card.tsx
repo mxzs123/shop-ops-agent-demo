@@ -30,22 +30,22 @@ type PlanActionType =
 
 function planTitle(actionType: PlanActionType, single: boolean): string {
   if (actionType === "goods.create" || actionType === "goods.batchCreate") {
-    return single ? "录入预览" : "批量录入预览";
+    return single ? "登録プレビュー" : "一括登録プレビュー";
   }
   if (actionType === "goods.delete" || actionType === "goods.batchDelete") {
-    return single ? "删除预览" : "批量删除预览";
+    return single ? "削除プレビュー" : "一括削除プレビュー";
   }
-  return single ? "修改预览" : "批量修改预览";
+  return single ? "変更プレビュー" : "一括変更プレビュー";
 }
 
 function planConfirmLabel(actionType: PlanActionType): string {
   if (actionType === "goods.create" || actionType === "goods.batchCreate") {
-    return "确认录入";
+    return "登録を確定";
   }
   if (actionType === "goods.delete" || actionType === "goods.batchDelete") {
-    return "确认删除";
+    return "削除を確定";
   }
-  return "确认执行";
+  return "確認して実行";
 }
 
 function rowKind(plan: GoodsEditPlan): DiffTableRow["kind"] {
@@ -70,16 +70,16 @@ function diffStatus(
 }
 
 const FIELD_COLUMNS: DiffTableColumn[] = [
-  { key: "field", label: "字段", width: "7rem" },
-  { key: "before", label: "修改前", role: "before" },
-  { key: "after", label: "修改后", role: "after" },
+  { key: "field", label: "項目", width: "7rem" },
+  { key: "before", label: "変更前", role: "before" },
+  { key: "after", label: "変更後", role: "after" },
 ];
 
 const BATCH_COLUMNS: DiffTableColumn[] = [
   { key: "product", label: "商品", width: "40%" },
-  { key: "field", label: "字段", width: "16%" },
-  { key: "before", label: "修改前", role: "before", width: "22%" },
-  { key: "after", label: "修改后", role: "after", width: "22%" },
+  { key: "field", label: "項目", width: "16%" },
+  { key: "before", label: "変更前", role: "before", width: "22%" },
+  { key: "after", label: "変更後", role: "after", width: "22%" },
 ];
 
 export const PlanCard = memo(function PlanCard({
@@ -119,7 +119,7 @@ export const PlanCard = memo(function PlanCard({
         kind,
       }))}
       status={diffStatus(action)}
-      summary={`${plan.changes.length} 个字段变化`}
+      summary={`${plan.changes.length} 項目を変更`}
       title={
         <>
           <span className="text-ink-3">{planTitle(actionType, true)} · </span>
@@ -208,16 +208,16 @@ export const BatchPlanCard = memo(function BatchPlanCard({
       disabled={disabled}
       hideActions={plannedCount <= 0}
       meta={[
-        `${plannedCount} 件${status === "idle" ? "待执行" : ""}`,
-        totalCount !== plannedCount ? `${totalCount} 件匹配` : "",
-        skippedCount > 0 ? `跳过 ${skippedCount} 件` : "",
+        `${plannedCount} 件${status === "idle" ? "が実行待ち" : ""}`,
+        totalCount !== plannedCount ? `${totalCount} 件が該当` : "",
+        skippedCount > 0 ? `スキップ ${skippedCount} 件` : "",
       ]
         .filter(Boolean)
         .join(" · ")}
       minWidth="40rem"
       notice={
         sampleCount < plannedCount
-          ? `仅展示前 ${sampleCount} 个用于核对；确认后将处理全部 ${plannedCount} 个商品。`
+          ? `確認用に先頭 ${sampleCount} 件のみ表示しています。確定すると ${plannedCount} 件すべてを処理します。`
           : undefined
       }
       onCancel={() => onCancelPlans(plans, confirmation)}
@@ -227,9 +227,9 @@ export const BatchPlanCard = memo(function BatchPlanCard({
       sticky
       summary={`${
         sampleCount < plannedCount
-          ? `${sampleCount} 个样本`
-          : `${plannedCount} 件商品`
-      } · ${changeCount} 个字段变化`}
+          ? `サンプル ${sampleCount} 件`
+          : `商品 ${plannedCount} 件`
+      } · ${changeCount} 項目を変更`}
       title={planTitle(actionType, totalCount === 1)}
       warnings={batchPlanWarningMessages(rawWarnings)}
     />

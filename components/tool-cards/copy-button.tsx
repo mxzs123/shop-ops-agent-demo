@@ -53,7 +53,7 @@ export function CopyButton({
       onKeyDown={(event) => {
         event.stopPropagation();
       }}
-      title={copied ? "已复制" : ariaLabel}
+      title={copied ? "コピーしました" : ariaLabel}
       type="button"
     >
       {copied ? (

@@ -42,7 +42,7 @@ export const ConversationScrollButton = () => {
   return (
     !isAtBottom && (
       <button
-        aria-label="滚动到底部"
+        aria-label="一番下までスクロール"
         className="absolute bottom-4 left-1/2 flex size-8 -translate-x-1/2 items-center justify-center rounded-full bg-surface text-ink-2 shadow-raised transition-[color,transform] hover:text-ink active:scale-[0.94]"
         onClick={handleScrollToBottom}
         style={{ animation: "pop-in 180ms cubic-bezier(0.23,1,0.32,1) both" }}

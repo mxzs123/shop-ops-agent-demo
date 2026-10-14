@@ -148,7 +148,7 @@ export const SearchResultCard = memo(function SearchResultCard({
       .then((response) => response.json())
       .then((body: ToolOutput<GoodsSummary>) => {
         if (!body.ok || !body.data) {
-          throw new Error(body.error ?? "详情读取失败");
+          throw new Error(body.error ?? "詳細の読み取りに失敗しました");
         }
 
         setDetailRows((current) => ({
@@ -213,15 +213,15 @@ export const SearchResultCard = memo(function SearchResultCard({
       <div className="primitive-card-bar flex items-center justify-between gap-3 border-b border-line">
         <div className="flex items-center gap-2 text-[13px] font-medium text-ink">
           <SearchIcon className="size-3.5 text-ink-3" />
-          商品检索
+          商品検索
         </div>
         <span className="text-[11.5px] tabular-nums text-ink-3">
-          {output.data?.total ?? rows.length} 件匹配
+          {output.data?.total ?? rows.length} 件が該当
         </span>
       </div>
       {rows.length === 0 ? (
         <div className="px-3 py-4 text-center text-[12.5px] text-ink-3">
-          未找到匹配商品
+          該当する商品がありません
         </div>
       ) : null}
       <ul className="divide-y divide-line">
@@ -256,7 +256,7 @@ export const SearchResultCard = memo(function SearchResultCard({
           type="button"
         >
           <ChevronDownIcon className="size-3.5" />
-          显示更多（剩余 {hiddenRowCount} 件）
+          さらに表示（残り {hiddenRowCount} 件）
         </button>
       ) : null}
     </div>
@@ -309,7 +309,7 @@ function GoodsRow({
           <span className="font-medium tabular-nums text-ink">
             {formatMoney(item.price)}
           </span>
-          <span className="text-ink-2">库存 {formatValue(item.stock)}</span>
+          <span className="text-ink-2">在庫 {formatValue(item.stock)}</span>
         </div>
       </div>
       <div className="hidden w-28 shrink-0 text-right sm:block">
@@ -317,7 +317,7 @@ function GoodsRow({
           {formatMoney(item.price)}
         </div>
         <div className="text-[11.5px] tabular-nums text-ink-3">
-          库存 {formatValue(item.stock)}
+          在庫 {formatValue(item.stock)}
         </div>
       </div>
       <ChevronDownIcon
@@ -352,13 +352,13 @@ function GoodsDetailPanel({
   const visibleGuidelines = guidelines.slice(0, MAX_VISIBLE_USAGE_GUIDELINES);
   const otherFields = pickOtherFields(details);
   const pills = [
-    { label: "分类", value: formatCategory(item) },
+    { label: "カテゴリ", value: formatCategory(item) },
     {
       label: "処方区分",
       value: formatDetailValue(getFieldValue(details, "isPrescription")),
     },
     {
-      label: "制造商",
+      label: "メーカー",
       value: formatDetailValue(getFieldValue(details, "manufacturer")),
     },
   ].filter((pill) => pill.value && pill.value !== "-");
@@ -368,12 +368,12 @@ function GoodsDetailPanel({
       {detailState === "loading" ? (
         <div className="flex items-center gap-2 text-xs font-medium text-ink-2">
           <LoadingArc />
-          正在读取商品详情
+          商品詳細を読み取り中
         </div>
       ) : null}
       {detailState === "error" ? (
         <div className="flex items-center gap-2 text-xs font-medium text-red">
-          详情读取失败
+          詳細の読み取りに失敗しました
           <button
             className="inline-flex h-6 items-center rounded-full bg-surface px-2.5 text-[11px] font-medium text-ink shadow-btn transition hover:bg-inset"
             onClick={onRetry}
@@ -401,7 +401,7 @@ function GoodsDetailPanel({
               ))}
             </div>
             <CopyButton
-              ariaLabel="复制商品名"
+              ariaLabel="商品名をコピー"
               className="-mr-1 -mt-0.5"
               value={item.name}
             />
@@ -419,7 +419,7 @@ function GoodsDetailPanel({
                   showAllFields ? "rotate-180" : ""
                 }`}
               />
-              {showAllFields ? "收起字段" : `查看全部字段（${otherFields.length}）`}
+              {showAllFields ? "項目を折りたたむ" : `すべての項目を表示（${otherFields.length}）`}
             </button>
           ) : null}
 
@@ -444,7 +444,7 @@ function GoodsDetailPanel({
           ) : null}
 
           {intro && intro !== "-" ? (
-            <DetailBlock title="商品详情">
+            <DetailBlock title="商品詳細">
               <p className="line-clamp-3 whitespace-pre-line text-xs leading-5 text-ink">
                 {intro}
               </p>
@@ -452,7 +452,7 @@ function GoodsDetailPanel({
           ) : null}
 
           {visibleGuidelines.length > 0 ? (
-            <DetailBlock title="用药须知">
+            <DetailBlock title="使用上の注意">
               <dl className="space-y-2">
                 {visibleGuidelines.map((section) => (
                   <div key={section.title}>
@@ -533,13 +533,13 @@ function GoodsImageGallery({ alt, images }: { alt: string; images: string[] }) {
         ) : (
           <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 bg-inset text-xs text-ink-3">
             <ImageIcon className="size-6" />
-            暂无图片
+            画像がありません
           </div>
         )}
         {hasMultiple ? (
           <>
             <button
-              aria-label="上一张"
+              aria-label="前の画像"
               className="absolute left-1.5 top-1/2 -translate-y-1/2 rounded-full bg-surface/90 p-1 text-ink opacity-0 shadow-btn transition-opacity group-hover/gallery:opacity-100 hover:bg-surface focus-visible:opacity-100"
               onClick={goPrev}
               type="button"
@@ -547,7 +547,7 @@ function GoodsImageGallery({ alt, images }: { alt: string; images: string[] }) {
               <ChevronLeftIcon className="size-4" />
             </button>
             <button
-              aria-label="下一张"
+              aria-label="次の画像"
               className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-surface/90 p-1 text-ink opacity-0 shadow-btn transition-opacity group-hover/gallery:opacity-100 hover:bg-surface focus-visible:opacity-100"
               onClick={goNext}
               type="button"
@@ -566,7 +566,7 @@ function GoodsImageGallery({ alt, images }: { alt: string; images: string[] }) {
             const thumbSrc = resolveDisplayImageUrl(url);
             return (
               <button
-                aria-label={`图 ${index + 1}`}
+                aria-label={`画像 ${index + 1}`}
                 aria-pressed={index === safeActive}
                 className={`size-9 shrink-0 overflow-hidden rounded-md border bg-white transition ${
                   index === safeActive
@@ -621,10 +621,10 @@ function GoodsInlineTags({
   prescription: boolean;
 }) {
   const tags = [
-    ...(prescription ? [{ className: "bg-orange-tint text-orange", label: "处方" }] : []),
+    ...(prescription ? [{ className: "bg-orange-tint text-orange", label: "処方" }] : []),
     marketable === true
-      ? { className: "bg-green-tint text-green", label: "上架" }
-      : { className: "bg-hover-2 text-ink-2", label: "下架" },
+      ? { className: "bg-green-tint text-green", label: "公開中" }
+      : { className: "bg-hover-2 text-ink-2", label: "非公開" },
   ];
 
   return (

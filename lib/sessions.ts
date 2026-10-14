@@ -100,7 +100,7 @@ export function getSessionTitle(messages: UIMessage[]) {
     !firstUserText &&
     firstUserMessage?.parts.some((part) => part.type === "file")
   ) {
-    return "图片消息";
+    return "画像メッセージ";
   }
 
   if (!firstUserText) {

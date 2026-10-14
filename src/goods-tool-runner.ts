@@ -319,7 +319,7 @@ function withAuditWarning(
       {
         code: "audit.write-failed",
         message:
-          "执行已完成，但审计日志写入失败，请检查日志配置。",
+          "実行は完了しましたが、監査ログの書き込みに失敗しました。ログの設定を確認してください。",
       },
     ],
   };
@@ -362,7 +362,7 @@ function assertPreviewBackedWrite(
     typeof request.previewId === "string" ? request.previewId.trim() : "";
   if (!previewId) {
     throw new AdminApiError(
-      "非 fixture 后端仅允许通过 previewId 执行，请先调用 plan 工具生成预览。",
+      "fixture 以外のバックエンドでは previewId による実行のみ許可されています。先に plan ツールでプレビューを作成してください。",
       403,
     );
   }
@@ -376,7 +376,7 @@ export function assertWritesAllowed(
     process.env.ADMIN_AGENT_ALLOW_WRITES !== "true"
   ) {
     throw new AdminApiError(
-      "当前后端不是 fixture，且没有开启 ADMIN_AGENT_ALLOW_WRITES。已阻止写入。",
+      "現在のバックエンドは fixture ではなく、ADMIN_AGENT_ALLOW_WRITES も有効になっていないため、書き込みをブロックしました。",
       403,
     );
   }
@@ -399,7 +399,7 @@ function assertSinglePreview(input: unknown): void {
   const request = isRecord(input) ? input : {};
   if (!hasExpectedChanges(request.expectedChanges)) {
     throw new AdminApiError(
-      "没有找到可确认的执行预览。请先生成预览，再确认执行。",
+      "確認できる実行プレビューが見つかりません。先にプレビューを作成してから確認してください。",
       400,
     );
   }
@@ -416,7 +416,7 @@ function assertBatchPreviews(input: unknown): void {
   for (const operation of operations) {
     if (isRecord(operation) && !hasExpectedChanges(operation.expectedChanges)) {
       throw new AdminApiError(
-        `没有找到商品 ${String(operation.id ?? operation.targetId ?? "")} 的可确认执行预览。请先生成预览，再确认执行。`,
+        `商品 ${String(operation.id ?? operation.targetId ?? "")} の確認できる実行プレビューが見つかりません。先にプレビューを作成してから確認してください。`,
         400,
       );
     }
@@ -439,7 +439,7 @@ function assertBatchCreatePreviews(input: unknown): void {
     if (isRecord(operation) && !hasExpectedChanges(operation.expectedChanges)) {
       const input = isRecord(operation.input) ? operation.input : operation;
       throw new AdminApiError(
-        `没有找到商品 ${String(input.name ?? input.bn ?? "")} 的可确认录入预览。请先生成预览，再确认执行。`,
+        `商品 ${String(input.name ?? input.bn ?? "")} の確認できる登録プレビューが見つかりません。先にプレビューを作成してから確認してください。`,
         400,
       );
     }

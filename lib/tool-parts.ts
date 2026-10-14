@@ -28,40 +28,40 @@ export interface PlanConfirmationContext {
 }
 
 export const TOOL_LABELS: Record<string, string> = {
-  goods_execute: "预览执行",
+  goods_execute: "プレビューの実行",
   // Legacy execute tool names kept readable for restored sessions.
-  goods_execute_batch_edit: "批量商品编辑执行",
-  goods_execute_batch_create: "批量商品录入执行",
-  goods_execute_filter_edit: "范围批量编辑执行",
-  goods_execute_create: "商品录入执行",
-  goods_execute_delete: "商品删除执行",
-  goods_execute_edit: "商品编辑执行",
-  goods_get_editable: "商品详情读取",
-  goods_plan_batch_edit: "批量商品编辑预览",
-  goods_plan_batch_create: "批量商品录入预览",
-  goods_plan_create: "商品录入预览",
-  goods_plan_delete: "商品删除预览",
-  goods_plan_edit: "商品编辑预览",
-  goods_plan_filter_edit: "范围批量编辑预览",
-  goods_search: "商品检索",
+  goods_execute_batch_edit: "商品の一括編集の実行",
+  goods_execute_batch_create: "商品の一括登録の実行",
+  goods_execute_filter_edit: "範囲指定の一括編集の実行",
+  goods_execute_create: "商品登録の実行",
+  goods_execute_delete: "商品削除の実行",
+  goods_execute_edit: "商品編集の実行",
+  goods_get_editable: "商品詳細の読み取り",
+  goods_plan_batch_edit: "商品の一括編集プレビュー",
+  goods_plan_batch_create: "商品の一括登録プレビュー",
+  goods_plan_create: "商品登録プレビュー",
+  goods_plan_delete: "商品削除プレビュー",
+  goods_plan_edit: "商品編集プレビュー",
+  goods_plan_filter_edit: "範囲指定の一括編集プレビュー",
+  goods_search: "商品検索",
 };
 
 export const TOOL_PENDING_MESSAGES: Record<string, string> = {
-  goods_execute: "正在执行操作",
-  goods_execute_batch_edit: "正在执行批量操作",
-  goods_execute_batch_create: "正在执行批量录入",
-  goods_execute_filter_edit: "正在执行范围批量操作",
-  goods_execute_create: "正在录入商品",
-  goods_execute_delete: "正在删除商品",
-  goods_execute_edit: "正在执行商品编辑",
-  goods_get_editable: "正在读取商品详情",
-  goods_plan_batch_edit: "正在生成批量预览",
-  goods_plan_batch_create: "正在生成批量录入预览",
-  goods_plan_create: "正在生成录入预览",
-  goods_plan_delete: "正在生成删除预览",
-  goods_plan_edit: "正在生成编辑预览",
-  goods_plan_filter_edit: "正在生成范围批量预览",
-  goods_search: "正在检索商品",
+  goods_execute: "操作を実行中",
+  goods_execute_batch_edit: "一括操作を実行中",
+  goods_execute_batch_create: "一括登録を実行中",
+  goods_execute_filter_edit: "範囲指定の一括操作を実行中",
+  goods_execute_create: "商品を登録中",
+  goods_execute_delete: "商品を削除中",
+  goods_execute_edit: "商品編集を実行中",
+  goods_get_editable: "商品詳細を読み取り中",
+  goods_plan_batch_edit: "一括プレビューを作成中",
+  goods_plan_batch_create: "一括登録プレビューを作成中",
+  goods_plan_create: "登録プレビューを作成中",
+  goods_plan_delete: "削除プレビューを作成中",
+  goods_plan_edit: "編集プレビューを作成中",
+  goods_plan_filter_edit: "範囲指定の一括プレビューを作成中",
+  goods_search: "商品を検索中",
 };
 
 export const PLAN_TOOL_NAMES = new Set([
@@ -111,18 +111,18 @@ export function toolLabel(name: string) {
 
 export function toolPendingMessage(name: string, plannedCount?: number) {
   if (plannedCount !== undefined && EXECUTE_TOOL_NAMES.has(name)) {
-    return `${plannedCount.toLocaleString("zh-CN")} 件正在执行`;
+    return `${plannedCount.toLocaleString("ja-JP")} 件を実行中`;
   }
 
-  return TOOL_PENDING_MESSAGES[name] ?? "正在执行";
+  return TOOL_PENDING_MESSAGES[name] ?? "実行中";
 }
 
 export function toolFailureMessage(name: string, error?: string) {
-  return `${toolLabel(name)}失败${error ? `：${error}` : ""}`;
+  return `${toolLabel(name)}に失敗${error ? `：${error}` : ""}`;
 }
 
 export function toolCompleteMessage(name: string) {
-  return `${toolLabel(name)}完成`;
+  return `${toolLabel(name)}が完了`;
 }
 
 export function collectConsecutivePlans(

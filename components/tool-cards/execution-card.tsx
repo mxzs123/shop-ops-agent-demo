@@ -28,44 +28,44 @@ function batchRows(data: GoodsBatchEditExecution): TaskRow[] {
 
   if (data.successCount > 0 || (failureCount === 0 && skippedCount === 0)) {
     rows.push({
-      amount: `${data.successCount.toLocaleString("zh-CN")} 件`,
+      amount: `${data.successCount.toLocaleString("ja-JP")} 件`,
       details: [
         ...data.items.map((item) => ({
           label: item.target.name,
           meta: changeSummary(item) || `ID ${item.target.id}`,
         })),
         ...(sampleCount < data.successCount
-          ? [{ label: `仅展示前 ${sampleCount} 件` }]
+          ? [{ label: `先頭 ${sampleCount} 件のみ表示` }]
           : []),
       ],
       key: "success",
-      label: "执行成功",
+      label: "実行成功",
       status: "done",
     });
   }
 
   if (failureCount > 0) {
     rows.push({
-      amount: `${failureCount.toLocaleString("zh-CN")} 件`,
+      amount: `${failureCount.toLocaleString("ja-JP")} 件`,
       details: (data.failures ?? []).map((failure) => ({
         label:
           failure.target?.name ??
-          (failure.id !== undefined ? `ID ${failure.id}` : `第 ${failure.index + 1} 件`),
+          (failure.id !== undefined ? `ID ${failure.id}` : `${failure.index + 1} 件目`),
         meta: failure.error,
         tone: "error" as const,
       })),
       key: "failed",
-      label: "执行失败",
+      label: "実行失敗",
       status: "failed",
     });
   }
 
   if (skippedCount > 0) {
     rows.push({
-      amount: `${skippedCount.toLocaleString("zh-CN")} 件`,
+      amount: `${skippedCount.toLocaleString("ja-JP")} 件`,
       details: [],
       key: "skipped",
-      label: "未执行",
+      label: "未実行",
       status: "skipped",
     });
   }

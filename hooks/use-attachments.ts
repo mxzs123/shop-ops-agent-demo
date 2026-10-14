@@ -34,7 +34,7 @@ export function useAttachments() {
 
     const imageFiles = files.filter(isImageFile);
     if (imageFiles.length !== files.length) {
-      setAttachmentError("只能添加图片文件（image/*）。");
+      setAttachmentError("追加できるのは画像ファイル（image/*）だけです。");
       return;
     }
 
@@ -43,7 +43,7 @@ export function useAttachments() {
       imageParts = await Promise.all(imageFiles.map(readImageAttachment));
     } catch (error) {
       setAttachmentError(
-        error instanceof Error ? error.message : "图片读取失败",
+        error instanceof Error ? error.message : "画像の読み取りに失敗しました",
       );
       return;
     }
@@ -59,7 +59,7 @@ export function useAttachments() {
     });
     if (!accepted) {
       setAttachmentError(
-        `一次最多添加 ${MAX_PENDING_IMAGES} 张图片。`,
+        `一度に追加できる画像は最大 ${MAX_PENDING_IMAGES} 枚です。`,
       );
       return;
     }
@@ -70,7 +70,7 @@ export function useAttachments() {
       const uploadedImages = await uploadImageFiles(imageFiles);
       if (uploadedImages.length !== imageParts.length) {
         throw new Error(
-          `图片上传返回数量不一致：期望 ${imageParts.length}，实际 ${uploadedImages.length}`,
+          `画像アップロードの件数が一致しません：期待 ${imageParts.length} 件、実際 ${uploadedImages.length} 件`,
         );
       }
 
@@ -100,7 +100,7 @@ export function useAttachments() {
       const message =
         error instanceof Error
           ? error.message
-          : "图片上传失败，请重试。";
+          : "画像のアップロードに失敗しました。もう一度お試しください。";
       setAttachmentError(message);
       setPendingImages((current) =>
         current.map((image) =>

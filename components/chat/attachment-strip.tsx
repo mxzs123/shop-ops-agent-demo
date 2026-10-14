@@ -18,10 +18,10 @@ export function AttachmentPreviewStrip({
         <div
           className="relative size-16 shrink-0 overflow-hidden rounded-control bg-field shadow-hairline"
           key={attachment.id}
-          title={`${attachment.filename ?? "图片"} · ${formatFileSize(attachment.size)}`}
+          title={`${attachment.filename ?? "画像"} · ${formatFileSize(attachment.size)}`}
         >
           <div
-            aria-label={attachment.filename ?? "待发送图片"}
+            aria-label={attachment.filename ?? "送信待ちの画像"}
             className="size-full bg-cover bg-center"
             role="img"
             style={{ backgroundImage: `url(${attachment.url})` }}
@@ -37,16 +37,16 @@ export function AttachmentPreviewStrip({
             title={attachment.uploadError ?? attachment.uploadedPath}
           >
             {attachment.uploadStatus === "uploaded"
-              ? "已上传"
+              ? "アップロード済み"
               : attachment.uploadStatus === "error"
-                ? "失败"
-                : "上传中"}
+                ? "失敗"
+                : "アップロード中"}
           </span>
           <button
-            aria-label={`移除 ${attachment.filename ?? "图片"}`}
+            aria-label={`削除: ${attachment.filename ?? "画像"}`}
             className="absolute right-1 top-1 inline-flex size-5 items-center justify-center rounded-full bg-surface text-ink shadow-btn transition hover:bg-inset"
             onClick={() => onRemove(attachment.id)}
-            title="删除"
+            title="削除"
             type="button"
           >
             <XIcon className="size-3" />

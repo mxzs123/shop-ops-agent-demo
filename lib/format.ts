@@ -31,7 +31,7 @@ export function cleanRichText(value: unknown) {
 
 export function formatDetailValue(value: unknown) {
   if (typeof value === "boolean") {
-    return value ? "是" : "否";
+    return value ? "はい" : "いいえ";
   }
 
   const text = cleanRichText(value);
@@ -44,7 +44,7 @@ export function formatMoney(value: unknown) {
     return "-";
   }
 
-  return `JPY ${parsed.toLocaleString("zh-CN")}`;
+  return `JPY ${parsed.toLocaleString("ja-JP")}`;
 }
 
 export function formatValue(value: unknown) {
@@ -52,7 +52,7 @@ export function formatValue(value: unknown) {
     return "-";
   }
   if (typeof value === "boolean") {
-    return value ? "是" : "否";
+    return value ? "はい" : "いいえ";
   }
 
   return String(value);
@@ -94,19 +94,19 @@ export function formatRelativeTime(timestamp: number) {
   const day = 24 * hour;
 
   if (!Number.isFinite(diffMs) || diffMs < minute) {
-    return "刚刚";
+    return "たった今";
   }
   if (diffMs < hour) {
-    return `${Math.floor(diffMs / minute)} 分钟前`;
+    return `${Math.floor(diffMs / minute)} 分前`;
   }
   if (diffMs < day) {
-    return `${Math.floor(diffMs / hour)} 小时前`;
+    return `${Math.floor(diffMs / hour)} 時間前`;
   }
   if (diffMs < 2 * day) {
-    return "昨天";
+    return "昨日";
   }
 
-  return new Intl.DateTimeFormat("zh-CN", {
+  return new Intl.DateTimeFormat("ja-JP", {
     day: "numeric",
     month: "numeric",
   }).format(timestamp);

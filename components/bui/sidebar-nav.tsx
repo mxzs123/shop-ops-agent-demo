@@ -79,16 +79,16 @@ function BackendBadge({ status }: { status: string }) {
       ? "bg-green-tint text-green"
       : status === "Fixture"
         ? "bg-orange-tint text-orange"
-        : status === "检测中"
+        : status === "確認中"
           ? "bg-hover-2 text-ink-3"
           : "bg-red-tint text-red";
   const label =
-    status === "Shadow" || status === "Fixture" || status === "检测中" ? status : "离线";
+    status === "Shadow" || status === "Fixture" || status === "確認中" ? status : "オフライン";
 
   return (
     <span
       className={`inline-flex h-[18px] min-w-0 items-center truncate rounded-full px-1.5 text-[10.5px] font-medium ${tone}`}
-      title={status === "Fixture" ? "测试数据：写入只改内存" : status}
+      title={status === "Fixture" ? "テストデータ：書き込みはメモリ上のみ" : status}
     >
       {label}
     </span>
@@ -121,7 +121,7 @@ export const SidebarNav = memo(function SidebarNav({
   /** mobile drawer visibility */
   open: boolean;
   sessions: ChatSession[];
-  /** backend health label: "Shadow" | "Fixture" | "检测中" | an error */
+  /** backend health label: "Shadow" | "Fixture" | "確認中" | an error */
   status: string;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -189,7 +189,7 @@ export const SidebarNav = memo(function SidebarNav({
   return (
     <aside
       data-sidebar-collapsed={collapsed}
-      aria-label="对话导航"
+      aria-label="会話ナビゲーション"
       className={`fixed inset-y-0 left-0 z-40 flex w-72 shrink-0 flex-col overflow-hidden border-r border-line bg-page py-3 transition-[width,transform,box-shadow] md:static md:translate-x-0 md:shadow-none ${
         collapsed ? "md:w-[52px]" : "md:w-60"
       } ${open ? "translate-x-0 shadow-overlay" : "-translate-x-full"}`}
@@ -214,8 +214,8 @@ export const SidebarNav = memo(function SidebarNav({
         </div>
         <button
           type="button"
-          aria-label={collapsed ? "展开侧边栏" : "折叠侧边栏"}
-          title={collapsed ? "展开" : "折叠"}
+          aria-label={collapsed ? "サイドバーを開く" : "サイドバーを閉じる"}
+          title={collapsed ? "開く" : "閉じる"}
           onClick={onToggleCollapsed}
           className={`hidden size-8 shrink-0 items-center justify-center rounded-[8px] text-ink-3 transition-[background-color,color] duration-150 hover:bg-hover-2 hover:text-ink md:flex ${
             collapsed ? "md:absolute md:left-[10px]" : ""
@@ -229,7 +229,7 @@ export const SidebarNav = memo(function SidebarNav({
         <RailButton
           disabled={disabled}
           icon={<SquarePenIcon className="size-[17px]" />}
-          label="新对话"
+          label="新しい会話"
           onClick={onNewConversation}
         />
       </GlideGroup>
@@ -244,12 +244,12 @@ export const SidebarNav = memo(function SidebarNav({
             }`}
             style={{ transitionDuration: `${CHAT_SEARCH_MOTION.duration}ms`, transitionTimingFunction: CHAT_SEARCH_MOTION.easing }}
           >
-            对话记录
+            会話履歴
           </div>
 
           <button
             type="button"
-            aria-label="搜索对话"
+            aria-label="会話を検索"
             aria-expanded={searchOpen}
             onClick={() => setSearchOpen(true)}
             className={`absolute right-0 top-0 z-10 flex size-8 items-center justify-center rounded-[8px] text-ink-3 transition-[opacity,background-color,color,transform] hover:bg-hover-2 hover:text-ink active:scale-[0.96] ${
@@ -278,14 +278,14 @@ export const SidebarNav = memo(function SidebarNav({
               onKeyDown={(event) => {
                 if (event.key === "Escape") closeSearch();
               }}
-              placeholder="搜索对话"
-              aria-label="搜索对话记录"
+              placeholder="会話を検索"
+              aria-label="会話履歴を検索"
               tabIndex={searchOpen ? 0 : -1}
               className="ml-1.5 min-w-0 flex-1 bg-transparent text-[13px] font-medium text-ink outline-none placeholder:text-ink-3"
             />
             <button
               type="button"
-              aria-label="关闭搜索"
+              aria-label="検索を閉じる"
               tabIndex={searchOpen ? 0 : -1}
               onClick={closeSearch}
               className="flex size-8 shrink-0 items-center justify-center rounded-[8px] text-ink-3 transition-[background-color,color] duration-150 hover:bg-hover-2 hover:text-ink"
@@ -304,7 +304,7 @@ export const SidebarNav = memo(function SidebarNav({
               return (
                 <div key={session.id} className="sidebar-copy relative z-10 mx-2 px-0.5 py-0.5">
                   <input
-                    aria-label="编辑对话名称"
+                    aria-label="会話名を編集"
                     autoFocus
                     className="h-8 w-full rounded-[8px] bg-surface px-2 text-[13.5px] text-ink shadow-btn outline-none focus:shadow-[0_0_0_1px_var(--accent)]"
                     onBlur={commitRename}
@@ -357,8 +357,8 @@ export const SidebarNav = memo(function SidebarNav({
                 >
                   <button
                     type="button"
-                    aria-label={`重命名对话 ${session.title}`}
-                    title="重命名"
+                    aria-label={`会話「${session.title}」の名前を変更`}
+                    title="名前を変更"
                     disabled={disabled}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -371,8 +371,8 @@ export const SidebarNav = memo(function SidebarNav({
                   </button>
                   <button
                     type="button"
-                    aria-label={armed ? `再次点击删除对话 ${session.title}` : `删除对话 ${session.title}`}
-                    title={armed ? "再次点击删除" : "删除"}
+                    aria-label={armed ? `もう一度クリックして会話「${session.title}」を削除` : `会話「${session.title}」を削除`}
+                    title={armed ? "もう一度クリックして削除" : "削除"}
                     disabled={disabled}
                     onBlur={() => {
                       if (armed) setConfirmingDeleteId(null);
@@ -393,7 +393,7 @@ export const SidebarNav = memo(function SidebarNav({
           })}
           {visibleSessions.length === 0 ? (
             <div className="sidebar-copy mx-2 px-2 py-2 text-[12.5px] text-ink-3">
-              {normalizedQuery ? "没有匹配的对话" : "暂无对话"}
+              {normalizedQuery ? "該当する会話がありません" : "会話はまだありません"}
             </div>
           ) : null}
         </GlideGroup>
@@ -403,7 +403,7 @@ export const SidebarNav = memo(function SidebarNav({
         <GlideGroup>
           <RailButton
             icon={<SettingsIcon className="size-[17px]" />}
-            label="设置"
+            label="設定"
             onClick={onOpenSettings}
           />
         </GlideGroup>

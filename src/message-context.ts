@@ -198,7 +198,7 @@ function compactToolOutput(
 
   if (output.ok === false) {
     return {
-      error: truncateText(String(output.error ?? "工具调用失败")),
+      error: truncateText(String(output.error ?? "ツールの呼び出しに失敗しました")),
       ok: false,
       status: output.status,
     };
@@ -326,7 +326,7 @@ function compactExecution(value: unknown) {
 function compactFailure(value: unknown) {
   const failure = isRecord(value) ? value : {};
   return {
-    error: truncateText(String(failure.error ?? "执行失败")),
+    error: truncateText(String(failure.error ?? "実行に失敗しました")),
     id: failure.id,
     index: failure.index,
     status: failure.status,

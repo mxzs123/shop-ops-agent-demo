@@ -102,16 +102,16 @@ export function SettingsDialog({
               id="settings-dialog-title"
             >
               <KeyRoundIcon className="size-[18px] text-accent" />
-              模型设置
+              モデル設定
             </div>
             <div className="mt-1 text-[13px] text-ink-2">
               {apiKeySaved
-                ? "Claude API Key 已保存，可输入新 key 替换。"
-                : "Claude API Key 未设置。"}
+                ? "Claude API キーは保存済みです。新しいキーを入力すると置き換えられます。"
+                : "Claude API キーが未設定です。"}
             </div>
           </div>
           <button
-            aria-label="关闭设置"
+            aria-label="設定を閉じる"
             className="inline-flex size-8 items-center justify-center rounded-control text-ink-3 transition-colors hover:bg-hover-2 hover:text-ink"
             onClick={onClose}
             type="button"
@@ -132,7 +132,7 @@ export function SettingsDialog({
           id="model-api-key"
           ref={keyInputRef}
           onChange={(event) => onChangeApiKeyDraft(event.target.value)}
-          placeholder={apiKeySaved ? "输入新 key 替换当前设置" : "sk-ant-..."}
+          placeholder={apiKeySaved ? "新しいキーを入力して置き換え" : "sk-ant-..."}
           type="password"
           value={apiKeyDraft}
         />
@@ -149,7 +149,7 @@ export function SettingsDialog({
               onClick={onClearApiKey}
               type="button"
             >
-              清除
+              クリア
             </button>
           ) : null}
           <button

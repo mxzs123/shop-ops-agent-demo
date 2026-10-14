@@ -26,7 +26,7 @@ export const MAX_PENDING_IMAGES = 8;
 
 export function toFileUIPart(attachment: PendingImageAttachment): FileUIPart {
   if (!attachment.uploadedPath) {
-    throw new Error("图片尚未上传成功，不能发送。");
+    throw new Error("画像のアップロードが完了していないため、送信できません。");
   }
 
   return {
@@ -50,7 +50,7 @@ export function readImageAttachment(
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result !== "string" || reader.result.length === 0) {
-        reject(new Error("图片读取结果为空"));
+        reject(new Error("画像の読み取り結果が空です"));
         return;
       }
 
@@ -65,7 +65,7 @@ export function readImageAttachment(
       });
     };
     reader.onerror = () =>
-      reject(reader.error ?? new Error("图片读取失败"));
+      reject(reader.error ?? new Error("画像の読み取りに失敗しました"));
     reader.readAsDataURL(file);
   });
 }
@@ -88,14 +88,14 @@ export async function uploadImageFiles(
 
   if (!response.ok) {
     throw new Error(
-      output.error ?? `图片上传接口返回 ${response.status}`,
+      output.error ?? `画像アップロード API が ${response.status} を返しました`,
     );
   }
   if (!output.ok) {
-    throw new Error(output.error ?? "图片上传失败");
+    throw new Error(output.error ?? "画像のアップロードに失敗しました");
   }
   if (!Array.isArray(output.data)) {
-    throw new Error("图片上传响应 data 必须是数组");
+    throw new Error("画像アップロードのレスポンスの data は配列である必要があります");
   }
 
   return output.data;

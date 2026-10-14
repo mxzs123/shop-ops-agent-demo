@@ -49,7 +49,7 @@ export async function POST(
       request.headers.get("x-admin-agent-direct-execute") !== "confirmed"
     ) {
       throw new AdminApiError(
-        "直接工具接口不允许写入 shadow Admin。请通过聊天确认执行，或只在测试 fixture 后端调用。",
+        "ツールを直接呼ぶエンドポイントから shadow Admin への書き込みはできません。チャットで確認して実行するか、テスト用の fixture バックエンドでのみ呼び出してください。",
         403,
       );
     }

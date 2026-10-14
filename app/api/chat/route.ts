@@ -56,44 +56,44 @@ const PLAN_TOOL_NAMES = [
 
 const idSchema = z
   .union([z.string().min(1), z.number()])
-  .describe("商品 ID，可以来自检索结果。");
+  .describe("商品 ID。検索結果のものを使えます。");
 
 const goodsPatchSchema = z
   .object({
-    bn: z.string().optional().describe("商品编码。"),
-    brief: z.string().optional().describe("商品简介。"),
-    goodsCategoryId: z.number().optional().describe("商品分类 ID。"),
+    bn: z.string().optional().describe("商品コード。"),
+    brief: z.string().optional().describe("商品の概要。"),
+    goodsCategoryId: z.number().optional().describe("カテゴリ ID。"),
     image: z
       .string()
       .optional()
-      .describe("封面图。使用已上传资源的 /upload/... 路径或完整资源 URL。"),
+      .describe("メイン画像。アップロード済みリソースの /upload/... パスか完全な URL を指定します。"),
     images: z
       .string()
       .optional()
       .describe(
-        "商品图集。多个图片用英文逗号分隔，顺序就是前台展示顺序；调整顺序时传完整有序列表。",
+        "商品画像の一覧。複数の画像は半角カンマで区切り、並び順がそのままストアでの表示順になります。順番を変えるときは、並べ替えた完全なリストを渡します。",
       ),
-    isFree: z.boolean().optional().describe("是否包邮。"),
-    isHot: z.boolean().optional().describe("是否热门。"),
-    isMarketable: z.boolean().optional().describe("是否上架。"),
-    isPrescription: z.boolean().optional().describe("是否处方药。"),
-    isRecommend: z.boolean().optional().describe("是否推荐。"),
-    manufacturer: z.string().optional().describe("制造商。"),
-    mktprice: z.number().optional().describe("市场价。"),
-    name: z.string().optional().describe("商品名称。"),
-    packaging: z.string().optional().describe("包装单位。"),
-    price: z.number().optional().describe("销售价。"),
-    sort: z.number().optional().describe("排序值。"),
-    stock: z.number().optional().describe("库存。"),
-    unit: z.string().optional().describe("单位。"),
+    isFree: z.boolean().optional().describe("送料無料かどうか。"),
+    isHot: z.boolean().optional().describe("人気商品かどうか。"),
+    isMarketable: z.boolean().optional().describe("公開中かどうか。"),
+    isPrescription: z.boolean().optional().describe("処方薬かどうか。"),
+    isRecommend: z.boolean().optional().describe("おすすめかどうか。"),
+    manufacturer: z.string().optional().describe("メーカー。"),
+    mktprice: z.number().optional().describe("希望小売価格。"),
+    name: z.string().optional().describe("商品名。"),
+    packaging: z.string().optional().describe("包装単位。"),
+    price: z.number().optional().describe("販売価格。"),
+    sort: z.number().optional().describe("並び順の値。"),
+    stock: z.number().optional().describe("在庫数。"),
+    unit: z.string().optional().describe("単位。"),
     video: z
       .string()
       .optional()
-      .describe("视频资源。使用已上传资源的 /upload/... 路径或完整资源 URL。"),
+      .describe("動画リソース。アップロード済みリソースの /upload/... パスか完全な URL を指定します。"),
     weight: z.number().optional().describe("重量。"),
   })
   .strict()
-  .describe("要修改的商品字段。只填写用户明确要求变更的字段。");
+  .describe("変更する商品の項目。ユーザーが明確に変更を求めた項目だけを指定します。");
 
 const goodsSearchSelectorSchema = z
   .object({
@@ -102,28 +102,28 @@ const goodsSearchSelectorSchema = z
     query: z
       .string()
       .optional()
-      .describe("商品名称关键词。没有关键词时可以为空字符串。"),
+      .describe("商品名のキーワード。キーワードがなければ空文字列で構いません。"),
   })
   .strict()
-  .describe("批量编辑筛选条件。空对象表示当前所有商品。");
+  .describe("一括編集の絞り込み条件。空のオブジェクトは現在のすべての商品を表します。");
 
 const goodsCreateInputSchema = goodsPatchSchema
   .extend({
-    bn: z.string().min(1).describe("商品编码。"),
-    goodsCategoryId: z.number().int().positive().describe("商品分类 ID。"),
+    bn: z.string().min(1).describe("商品コード。"),
+    goodsCategoryId: z.number().int().positive().describe("カテゴリ ID。"),
     image: z
       .string()
       .min(1)
       .describe(
-        "封面图。必须使用已上传资源的 /upload/... 路径或完整资源 URL。",
+        "メイン画像。アップロード済みリソースの /upload/... パスか完全な URL を必ず指定します。",
       ),
-    name: z.string().min(1).describe("商品名称。"),
-    price: z.number().min(0).describe("销售价。"),
-    stock: z.number().int().min(0).describe("库存。"),
-    weight: z.number().positive().describe("重量，单位克。"),
+    name: z.string().min(1).describe("商品名。"),
+    price: z.number().min(0).describe("販売価格。"),
+    stock: z.number().int().min(0).describe("在庫数。"),
+    weight: z.number().positive().describe("重量（グラム）。"),
   })
   .strict()
-  .describe("录入商品所需字段。目前创建单 SKU 默认货品。");
+  .describe("商品登録に必要な項目。現在は単一 SKU の既定品目を作成します。");
 
 interface ConfirmationContext {
   executeToolName?: string;
@@ -139,10 +139,10 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "请求体必须是 JSON。" }, { status: 400 });
+    return Response.json({ error: "リクエストボディは JSON である必要があります。" }, { status: 400 });
   }
   if (!isRecord(body)) {
-    return Response.json({ error: "请求体必须是对象。" }, { status: 400 });
+    return Response.json({ error: "リクエストボディはオブジェクトである必要があります。" }, { status: 400 });
   }
 
   const requestApiKey =
@@ -154,14 +154,14 @@ export async function POST(request: Request) {
   if (!apiKey) {
     return Response.json(
       {
-        error: `缺少 ${MODEL_LABEL} API Key。请在侧边栏设置中填写，或在本地环境变量中设置。`,
+        error: `${MODEL_LABEL} の API キーがありません。サイドバーの設定で入力するか、ローカルの環境変数に設定してください。`,
       },
       { status: 401 },
     );
   }
 
   if (!Array.isArray(messages)) {
-    return Response.json({ error: "messages 必须是数组。" }, { status: 400 });
+    return Response.json({ error: "messages は配列である必要があります。" }, { status: 400 });
   }
 
   const confirmation = parseConfirmationContext(body.confirmation);
@@ -191,7 +191,7 @@ export async function POST(request: Request) {
     safeToolResult(async () => {
       assertLatestUserConfirmed(
         latestUserText,
-        "用户还没有在最新消息里明确确认执行。请先输出预览并等待确认。",
+        "ユーザーは最新のメッセージで実行をまだ明確に確認していません。先にプレビューを示し、確認を待ってください。",
       );
       assertConfirmationMatchesExecuteTool(confirmation);
 
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
       });
       if (!previewId) {
         throw new AdminApiError(
-          "没有找到可确认的预览。请先生成预览，再确认执行。",
+          "確認できるプレビューが見つかりません。先にプレビューを作成してから確認してください。",
           400,
         );
       }
@@ -225,7 +225,7 @@ export async function POST(request: Request) {
   const tools = {
     goods_search: tool({
       description:
-        "检索商品列表。用户要查找、搜索、筛选商品，或需要拿到商品 ID 时调用。按名称关键词、分类 ID、上下架状态筛选，分页返回（limit 最大 200），每条包含 ID、名称、编码、价格、库存、上下架状态。范围型批量修改不要用它逐页枚举 ID，改用 goods_plan_filter_edit。",
+        "商品一覧を検索します。ユーザーが商品を探したい・絞り込みたいとき、または商品 ID が必要なときに呼び出します。商品名のキーワード、カテゴリ ID、公開状態で絞り込み、ページ単位で返します（limit は最大 200）。各行には ID、商品名、商品コード、価格、在庫、公開状態が含まれます。範囲を指定した一括変更では、これでページをめくって ID を列挙せず、goods_plan_filter_edit を使ってください。",
       inputSchema: z.object({
         goodsCategoryId: z.number().optional(),
         isMarketable: z.boolean().optional(),
@@ -234,14 +234,14 @@ export async function POST(request: Request) {
         query: z
           .string()
           .optional()
-          .describe("商品名称关键词。没有关键词时可以为空字符串。"),
+          .describe("商品名のキーワード。キーワードがなければ空文字列で構いません。"),
       }),
       execute: async (input) =>
         safeToolResult(() => searchGoods(adminClient, auth, input)),
     }),
     goods_get_editable: tool({
       description:
-        "读取单个商品当前的完整可编辑字段（价格、库存、图片、上下架等）。用户要查看某个商品详情，或修改值依赖当前值（如“价格上调 10%”“在图集末尾追加一张”）时调用。plan 工具会自行读取当前状态并生成对比，直接指定新值的修改不需要先调用本工具。",
+        "1 件の商品について、編集できる項目の現在値（価格、在庫、画像、公開状態など）をすべて読み取ります。ユーザーが商品の詳細を見たいとき、または変更後の値が現在値に依存するとき（「価格を 10% 上げる」「画像一覧の末尾に 1 枚追加する」など）に呼び出します。plan ツールは現在の状態を自分で読み取って差分を作るので、新しい値を直接指定する変更では、先にこのツールを呼ぶ必要はありません。",
       inputSchema: z.object({
         id: idSchema,
       }),
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
     }),
     goods_plan_edit: tool({
       description:
-        "生成商品编辑预览，返回 previewId。任何已知 ID 的商品修改（单个或多个）都必须先调用这个工具；多个商品放进同一次调用，让用户一次确认。",
+        "商品編集のプレビューを作成し、previewId を返します。ID が分かっている商品の変更は、1 件でも複数でも、必ず先にこのツールを呼び出します。複数の商品は 1 回の呼び出しにまとめ、ユーザーが一度で確認できるようにします。",
       inputSchema: z.object({
         operations: z
           .array(z.object({ id: idSchema, patch: goodsPatchSchema }))
@@ -264,7 +264,7 @@ export async function POST(request: Request) {
     }),
     goods_plan_filter_edit: tool({
       description:
-        "按筛选条件生成范围批量编辑预览，返回 previewId。用户说“所有商品”“全部上架商品”“某分类全部商品”等范围型批量修改时调用，不要先逐页枚举商品 ID。",
+        "絞り込み条件から範囲指定の一括編集プレビューを作成し、previewId を返します。ユーザーが「すべての商品」「公開中の商品すべて」「あるカテゴリの商品すべて」のように範囲で一括変更を求めたときに呼び出します。先にページをめくって商品 ID を列挙しないでください。",
       inputSchema: z.object({
         maxItems: z.number().int().min(1).max(5000).default(5000),
         patch: goodsPatchSchema,
@@ -277,7 +277,7 @@ export async function POST(request: Request) {
     }),
     goods_plan_create: tool({
       description:
-        "生成商品录入预览，返回 previewId。录入新商品（单个或多个）必须先调用这个工具；每个商品需要名称、编码、分类 ID、封面图、销售价、库存和重量。",
+        "商品登録のプレビューを作成し、previewId を返します。新しい商品の登録は、1 件でも複数でも、必ず先にこのツールを呼び出します。各商品には商品名、商品コード、カテゴリ ID、メイン画像、販売価格、在庫、重量が必要です。",
       inputSchema: z.object({
         items: z.array(goodsCreateInputSchema).min(1).max(1000),
       }),
@@ -288,7 +288,7 @@ export async function POST(request: Request) {
     }),
     goods_plan_delete: tool({
       description:
-        "生成商品删除预览，返回 previewId。删除商品（单个或多个）必须先调用这个工具，让用户确认商品 ID、名称和编码。",
+        "商品削除のプレビューを作成し、previewId を返します。商品の削除は、1 件でも複数でも、必ず先にこのツールを呼び出し、ユーザーに商品 ID、商品名、商品コードを確認してもらいます。",
       inputSchema: z.object({
         ids: z.array(idSchema).min(1).max(1000),
       }),
@@ -299,12 +299,12 @@ export async function POST(request: Request) {
     }),
     goods_execute: tool({
       description:
-        "确认执行已生成的预览（编辑、录入或删除）。只有用户最新消息明确确认时才能调用；传入 plan 工具返回的 previewId，不要把商品数据复制回上下文。",
+        "作成済みのプレビュー（編集・登録・削除）を実行します。ユーザーが最新のメッセージで明確に確認したときだけ呼び出せます。plan ツールが返した previewId を渡し、商品データをコンテキストに書き写さないでください。",
       inputSchema: z.object({
         previewId: z
           .string()
           .optional()
-          .describe("plan 工具返回的 previewId。"),
+          .describe("plan ツールが返した previewId。"),
       }),
       execute: async (input) => runExecute(input.previewId),
     }),
@@ -323,19 +323,20 @@ export async function POST(request: Request) {
     }),
     stopWhen: stepCountIs(6),
     system: [
-      "你是 Admin Agent，一家小型店铺的商品运营助手（演示环境，商品数据均为虚构）。",
-      `当前工具后端: ${config.backend}。你只能通过提供的工具检索、预览、执行商品操作。`,
-      "所有写操作都是两步：先调用 plan 工具生成预览（goods_plan_edit 编辑、goods_plan_create 录入、goods_plan_delete 删除、goods_plan_filter_edit 范围批量编辑），预览会返回 previewId；用户在最新消息明确确认后，调用 goods_execute 并传入该 previewId 执行。",
-      "修改、录入或删除多个商品时，把全部目标放进同一次 plan 调用生成一个合并预览，让用户一次确认；不要拆成多次预览，也不要把大量商品数据复制回上下文。",
-      "用户要求范围型批量修改（例如所有商品、全部上架商品、某分类全部商品）时，必须调用 goods_plan_filter_edit，不要逐页调用 goods_search，也不要自己枚举大量 ID。",
-      "录入商品缺少名称、编码、分类 ID、封面图、价格、库存或重量时先向用户索取；当前创建单 SKU 默认货品。",
-      "批量执行会返回成功、跳过、失败数量。出现部分失败时不要重试整批，先说明失败数量与原因，并建议用户只重试失败项。",
-      "用户上传的图片会直接附在消息里，你可以看到图片内容，并附有上传路径。图片字段也可以编辑：image 是封面图；images 是图集，多个图片用英文逗号分隔且顺序就是展示顺序；更换封面或调整顺序时必须在预览里体现完整变化。只使用用户提供或当前商品已有的上传路径/资源 URL，不要编造图片地址。",
-      "商品候选、字段对比、执行结果会由工具卡在界面展示；正文不要重复输出 Markdown 表格，只做一句话摘要和下一步问题。",
-      "当用户只说“确认执行”时，找到最近一条预览的 previewId 调用 goods_execute，并在工具返回后正常回复执行结果。",
-      "只有用户在最新消息中明确确认（如“确认”“确定”“执行”“可以”“好的”“没问题”“同意”）时才调用 goods_execute。同一条消息里如果带有取消、暂缓或犹豫的意思（如“先别执行”“等一下”“取消”“不确定”），视为未确认，先问清楚；服务端会按同样规则再校验。",
-      "执行失败或被阻止时，要把原因说清楚，并给出下一步。",
-      "回答使用中文，简洁、直接、偏工作流口吻。",
+      "あなたは Admin Agent です。小さなお店の商品運営を手伝うアシスタントです（デモ環境で、商品データはすべて架空です）。",
+      `現在のツールのバックエンド: ${config.backend}。商品の検索・プレビュー・実行は、提供されたツールを通じてのみ行えます。`,
+      "書き込みはすべて 2 段階です。まず plan ツールでプレビューを作成します（goods_plan_edit は編集、goods_plan_create は登録、goods_plan_delete は削除、goods_plan_filter_edit は範囲指定の一括編集）。プレビューは previewId を返します。ユーザーが最新のメッセージで明確に確認したら、その previewId を渡して goods_execute を呼び出し、実行します。",
+      "複数の商品を変更・登録・削除するときは、すべての対象を 1 回の plan 呼び出しにまとめて 1 つのプレビューを作り、ユーザーが一度で確認できるようにします。プレビューを何度にも分けたり、大量の商品データをコンテキストに書き写したりしないでください。",
+      "ユーザーが範囲で一括変更を求めたとき（すべての商品、公開中の商品すべて、あるカテゴリの商品すべて、など）は、必ず goods_plan_filter_edit を呼び出します。goods_search をページごとに呼んだり、大量の ID を自分で列挙したりしないでください。",
+      "商品登録で商品名、商品コード、カテゴリ ID、メイン画像、価格、在庫、重量のいずれかが足りないときは、先にユーザーに尋ねます。現在は単一 SKU の既定品目を作成します。",
+      "一括実行は成功・スキップ・失敗の件数を返します。一部が失敗したときは全体をやり直さず、まず失敗の件数と理由を伝え、失敗した分だけ再実行することを提案します。",
+      "ユーザーがアップロードした画像はメッセージに直接添付され、あなたは画像の内容を見ることができます。アップロード先のパスも添えられます。画像の項目も編集できます。image はメイン画像、images は画像一覧で、複数の画像は半角カンマで区切り、並び順がそのまま表示順になります。メイン画像の差し替えや順番の変更では、変更の全体をプレビューに反映させてください。ユーザーが提供したもの、または商品にすでにあるアップロードパス・リソース URL だけを使い、画像のアドレスを作り出さないでください。",
+      "商品の候補、項目の差分、実行結果は、ツールのカードが画面に表示します。本文で Markdown の表を繰り返さず、一文の要約と次に確認したいことだけを書いてください。",
+      "ユーザーが「確認して実行」とだけ言ったときは、直近のプレビューの previewId で goods_execute を呼び出し、ツールの結果が返ってから実行結果を普通に伝えます。",
+      "goods_execute を呼び出すのは、ユーザーが最新のメッセージで明確に確認したとき（「確認」「実行して」「はい」「お願いします」「OK」「問題ありません」など）だけです。同じメッセージに取り消し・保留・ためらいの意味（「まだ実行しないで」「ちょっと待って」「キャンセル」「やっぱりやめる」など）が含まれていれば未確認として扱い、先に意図を確かめます。サーバー側でも同じ規則で再度検証します。",
+      "実行が失敗した、またはブロックされたときは、理由をはっきり伝え、次にできることを示します。",
+      "過去のターンのツール結果は、履歴を短く保つために先頭の数件だけに省略されていることがあります。件数の合計は正しいので、省略を理由に以前の回答を訂正しないでください。全件が必要なときは検索し直します。",
+      "回答は日本語で、簡潔かつ率直に、業務のやり取りらしい口調で書きます。",
     ].join("\n"),
     tools,
     onFinish: ({ steps, totalUsage }) => {
@@ -396,22 +397,22 @@ function summarizeExecution(
   output: ToolResult<GoodsBatchEditExecution>,
 ): string {
   if (!output.ok || !output.data) {
-    const reason = output.error?.trim() || "工具调用失败";
-    return `执行未完成：${/[。.！!？?]$/u.test(reason) ? reason : `${reason}。`}`;
+    const reason = output.error?.trim() || "ツールの呼び出しに失敗しました";
+    return `実行は完了しませんでした：${/[。.！!？?]$/u.test(reason) ? reason : `${reason}。`}`;
   }
 
   const { failureCount = 0, skippedCount = 0, successCount } = output.data;
-  const parts = [`已执行：成功 ${successCount} 项`];
+  const parts = [`実行しました：成功 ${successCount} 件`];
   if (skippedCount > 0) {
-    parts.push(`跳过 ${skippedCount} 项`);
+    parts.push(`スキップ ${skippedCount} 件`);
   }
   if (failureCount > 0) {
-    parts.push(`失败 ${failureCount} 项`);
+    parts.push(`失敗 ${failureCount} 件`);
   }
 
-  const summary = `${parts.join("，")}。`;
+  const summary = `${parts.join("、")}。`;
   return failureCount > 0
-    ? `${summary}失败原因见上方结果，需要的话可以只重试失败项。`
+    ? `${summary}失敗の理由は上の結果をご覧ください。必要であれば、失敗した分だけ再実行できます。`
     : summary;
 }
 
@@ -431,7 +432,7 @@ async function safeToolResult<T>(
 
     console.error(error);
     return {
-      error: error instanceof Error ? error.message : "工具调用失败。",
+      error: error instanceof Error ? error.message : "ツールの呼び出しに失敗しました。",
       ok: false,
     };
   }
@@ -486,7 +487,7 @@ function describeFilePart(part: FileUIPart): string {
   const filename =
     typeof part.filename === "string" && part.filename.trim()
       ? part.filename
-      : "图片附件";
+      : "画像の添付";
   const mediaType = part.mediaType;
   const providerMetadata = part.providerMetadata;
   const metadata = isRecord(providerMetadata)
@@ -503,7 +504,7 @@ function describeFilePart(part: FileUIPart): string {
 
   if (!uploadedPath) {
     throw new AdminApiError(
-      "图片附件尚未上传成功，不能发送给模型。",
+      "画像のアップロードが完了していないため、モデルに送信できません。",
       400,
       {
         filename,
@@ -513,10 +514,10 @@ function describeFilePart(part: FileUIPart): string {
   }
 
   return [
-    `用户上传了图片附件：${filename} (${mediaType})。`,
-    `可用于商品编辑工具的上传路径：${uploadedPath}。`,
-    uploadedUrl ? `预览 URL：${uploadedUrl}。` : "",
-    "如果用户要求设置封面图，请把该路径用于 image；如果用户要求加入图集或调整顺序，请把完整有序列表用于 images。",
+    `ユーザーが画像を添付しました：${filename} (${mediaType})。`,
+    `商品編集ツールで使えるアップロードパス：${uploadedPath}。`,
+    uploadedUrl ? `プレビュー URL：${uploadedUrl}。` : "",
+    "ユーザーがメイン画像の設定を求めたら、このパスを image に使います。画像一覧への追加や順番の変更を求めたら、並べ替えた完全なリストを images に使います。",
   ]
     .filter(Boolean)
     .join(" ");
@@ -545,7 +546,7 @@ function assertConfirmationMatchesExecuteTool(
     confirmation?.executeToolName &&
     confirmation.executeToolName !== EXECUTE_TOOL_NAME
   ) {
-    throw new AdminApiError("确认按钮绑定的预览类型与执行工具不一致。", 400, {
+    throw new AdminApiError("確認ボタンに紐づくプレビューの種類が、実行ツールと一致しません。", 400, {
       expected: confirmation.executeToolName,
       received: EXECUTE_TOOL_NAME,
     });

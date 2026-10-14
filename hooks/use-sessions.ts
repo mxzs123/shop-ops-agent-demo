@@ -92,7 +92,7 @@ export function useSessions({
           messages: storedMessages,
           // Keep an existing (possibly user-renamed) title; only derive one
           // for sessions that do not have a title yet.
-          title: existing?.title || getSessionTitle(messages) || "新对话",
+          title: existing?.title || getSessionTitle(messages) || "新しい会話",
           updatedAt: now,
         };
         const nextSessions = [

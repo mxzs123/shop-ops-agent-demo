@@ -41,8 +41,8 @@ try {
   await waitForHealth(port);
 
   const html = await fetchText(`http://127.0.0.1:${port}/`);
-  assert.match(html, /今天要处理什么工作/);
-  assert.match(html, /例如「检索胃药」/);
+  assert.match(html, /今日は何を進めますか/);
+  assert.match(html, /例：「胃腸薬を検索」/);
   assert.match(html, /__next/);
 
   const uploadFormData = new FormData();
@@ -125,15 +125,15 @@ try {
 
   const createInput = {
     bn: "DEMO-CREATE-TEST",
-    brief: "自动化测试录入商品",
+    brief: "自動テストで登録した商品",
     goodsCategoryId: 10,
     image: upload.data[0].path,
     isMarketable: false,
-    name: "测试商品 新录入",
-    packaging: "盒",
+    name: "テスト商品 新規登録",
+    packaging: "箱",
     price: 1880,
     stock: 12,
-    unit: "盒",
+    unit: "箱",
     weight: 100,
   };
   const createPlan = await postTool(port, "goods.planCreate", createInput);
@@ -153,7 +153,7 @@ try {
 
   const createdSearch = await postTool(port, "goods.search", {
     limit: 5,
-    query: "新录入",
+    query: "新規登録",
   });
   assert.equal(createdSearch.ok, true);
   assert.equal(createdSearch.data.rows.length, 1);
@@ -177,7 +177,7 @@ try {
 
   const deletedSearch = await postTool(port, "goods.search", {
     limit: 5,
-    query: "新录入",
+    query: "新規登録",
   });
   assert.equal(deletedSearch.ok, true);
   assert.equal(deletedSearch.data.rows.length, 0);
@@ -234,7 +234,7 @@ try {
   assert.equal(partialExecute.data.failureCount, 1);
   assert.match(
     partialExecute.data.failures[0].error,
-    /商品数据已变化/,
+    /商品データが変更されています/,
   );
 
   const nativeMarketableTargets = search.data.rows
@@ -268,7 +268,7 @@ try {
   assert.equal(nativeStaleExecute.data.failureCount, 1);
   assert.match(
     nativeStaleExecute.data.failures[0].error,
-    /商品数据已变化/,
+    /商品データが変更されています/,
   );
 
   const filterPlan = await postTool(port, "goods.planFilterEdit", {
@@ -299,7 +299,7 @@ try {
       goodsCategoryId: 10,
       image: upload.data[0].path,
       isMarketable: false,
-      name: `测试商品 批量录入 ${index}`,
+      name: `テスト商品 一括登録 ${index}`,
       price: 1000 + index,
       stock: 10 + index,
       weight: 100,
@@ -390,7 +390,7 @@ try {
 
   const deletedBatchSearch = await postTool(port, "goods.search", {
     limit: 5,
-    query: "批量录入 1",
+    query: "一括登録 1",
   });
   assert.equal(deletedBatchSearch.ok, true);
   assert.equal(
@@ -497,7 +497,7 @@ async function createLargeFixture(sourcePath, targetPath) {
       id,
       isMarketable: index % 3 !== 0,
       isRecommend: false,
-      name: `测试商品 批量样本 ${index + 1}`,
+      name: `テスト商品 一括サンプル ${index + 1}`,
       sort: index + 1,
     });
     productsByGoodsId[String(id)] = [

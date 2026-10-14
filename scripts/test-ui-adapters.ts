@@ -69,23 +69,23 @@ console.log("ok - tool part layout");
 
 // ── chip steps ────────────────────────────────────────────────
 const running = toToolChipStep(
-  toolPart("goods_search", "input-available", { input: { page: 2, query: " 胃药 " } }),
+  toolPart("goods_search", "input-available", { input: { page: 2, query: " 胃薬 " } }),
   "k1",
 );
 assert.equal(running.status, "running");
 assert.equal(running.icon, "search");
-assert.equal(running.chip, "“胃药” · 第 2 页");
+assert.equal(running.chip, "“胃薬” · 2 ページ目");
 
 const failed = toToolChipStep(
   toolPart("goods_plan_delete", "output-available", {
     input: { ids: [1, 2, 3] },
-    output: { error: "预览不存在或已过期", ok: false },
+    output: { error: "プレビューが存在しないか期限切れです", ok: false },
   }),
   "k2",
 );
 assert.equal(failed.status, "error");
 assert.equal(failed.chip, "3 件");
-assert.deepEqual(failed.detail, [{ text: "预览不存在或已过期", tone: "error" }]);
+assert.deepEqual(failed.detail, [{ text: "プレビューが存在しないか期限切れです", tone: "error" }]);
 
 const streamError = toToolChipStep(
   toolPart("goods_get_editable", "output-error", { errorText: "timeout", input: { id: 7 } }),
@@ -102,13 +102,13 @@ const emptySearch = toToolChipStep(
   "k4",
 );
 assert.equal(emptySearch.status, "done");
-assert.equal(emptySearch.label, "未找到匹配商品");
-assert.equal(emptySearch.chip, "全部商品");
+assert.equal(emptySearch.label, "該当する商品がありません");
+assert.equal(emptySearch.chip, "すべての商品");
 
 assert.equal(toolRunHeader([running]), undefined, "single rows have no header");
 assert.equal(
   toolRunHeader([running, failed, emptySearch]),
-  "3 次工具调用 · 1 个进行中 · 1 个失败",
+  "ツール呼び出し 3 回 · 実行中 1 件 · 失敗 1 件",
 );
 console.log("ok - tool chip steps");
 
@@ -131,7 +131,7 @@ const executions = collectPreviewExecutions([
     }),
     toolPart("goods_execute", "output-available", {
       input: { previewId: "p-failed" },
-      output: { error: "预览不存在或已过期，请重新生成", ok: false },
+      output: { error: "プレビューが存在しないか期限切れです。作成し直してください", ok: false },
     }),
     toolPart("goods_execute", "output-available", {
       input: { previewId: "p-all-failed" },

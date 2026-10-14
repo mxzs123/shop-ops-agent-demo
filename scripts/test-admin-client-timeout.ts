@@ -40,7 +40,7 @@ assert.ok(caught instanceof AdminApiError, "should throw AdminApiError");
 assert.equal((caught as AdminApiError).status, 504, "should be 504 timeout");
 assert.match(
   (caught as AdminApiError).message,
-  /超时/,
+  /タイムアウト/,
   "message mentions timeout",
 );
 assert.ok(

@@ -39,11 +39,11 @@ const pngPixel = Uint8Array.from(
   ),
 );
 const messages: ModelMessage[] = [
-  { content: "查一下商品", role: "user" },
+  { content: "商品を調べて", role: "user" },
   {
     content: [
       {
-        input: { query: "维生素" },
+        input: { query: "ビタミン" },
         toolCallId: "call-1",
         toolName: "goods_search",
         type: "tool-call",
@@ -63,10 +63,10 @@ const messages: ModelMessage[] = [
     role: "tool",
   },
   // An assistant turn produced by a direct confirm execution.
-  { content: "已执行：成功 1 项。", role: "assistant" },
+  { content: "実行しました：成功 1 件。", role: "assistant" },
   {
     content: [
-      { text: "看这张图", type: "text" },
+      { text: "この画像を見て", type: "text" },
       { data: pngPixel, mediaType: "image/png", type: "file" },
     ],
     role: "user",

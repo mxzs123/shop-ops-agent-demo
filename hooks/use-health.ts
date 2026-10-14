@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export function useHealth() {
-  const [health, setHealth] = useState("检测中");
+  const [health, setHealth] = useState("確認中");
   const [adminPublicBaseUrl, setAdminPublicBaseUrl] = useState("");
   useEffect(() => {
     const controller = new AbortController();
@@ -11,7 +11,7 @@ export function useHealth() {
       .then((response) => response.json())
       .then((data) => {
         if (typeof data.adminPublicBaseUrl !== "string") {
-          throw new Error("health 缺少 adminPublicBaseUrl");
+          throw new Error("health に adminPublicBaseUrl がありません");
         }
 
         setAdminPublicBaseUrl(data.adminPublicBaseUrl);
@@ -23,7 +23,7 @@ export function useHealth() {
         }
 
         setAdminPublicBaseUrl("");
-        setHealth(error instanceof Error ? error.message : "离线");
+        setHealth(error instanceof Error ? error.message : "オフライン");
       });
 
     return () => controller.abort();

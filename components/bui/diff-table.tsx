@@ -96,11 +96,11 @@ const STATUS_PILLS: Record<
   Exclude<DiffTableStatus, "idle">,
   { glyph: ReactNode; label: string; tint: string; tone: string }
 > = {
-  cancelled: { glyph: null, label: "已取消", tint: "bg-hover-2", tone: "text-ink-2" },
-  done: { glyph: CheckGlyph, label: "已执行", tint: "bg-green-tint", tone: "text-green" },
-  failed: { glyph: CrossGlyph, label: "执行失败", tint: "bg-red-tint", tone: "text-red" },
-  partial: { glyph: BangGlyph, label: "部分执行成功", tint: "bg-orange-tint", tone: "text-orange" },
-  submitted: { glyph: null, label: "已确认，正在执行", tint: "bg-hover-2", tone: "text-ink-2" },
+  cancelled: { glyph: null, label: "キャンセル済み", tint: "bg-hover-2", tone: "text-ink-2" },
+  done: { glyph: CheckGlyph, label: "実行済み", tint: "bg-green-tint", tone: "text-green" },
+  failed: { glyph: CrossGlyph, label: "実行失敗", tint: "bg-red-tint", tone: "text-red" },
+  partial: { glyph: BangGlyph, label: "一部のみ成功", tint: "bg-orange-tint", tone: "text-orange" },
+  submitted: { glyph: null, label: "確認済み・実行中", tint: "bg-hover-2", tone: "text-ink-2" },
 };
 
 function StatusPill({ status }: { status: Exclude<DiffTableStatus, "idle"> }) {
@@ -134,7 +134,7 @@ function StatusPill({ status }: { status: Exclude<DiffTableStatus, "idle"> }) {
 }
 
 export default function DiffTable({
-  cancelLabel = "取消",
+  cancelLabel = "キャンセル",
   columns,
   confirmLabel,
   disabled,

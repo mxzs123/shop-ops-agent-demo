@@ -49,9 +49,9 @@ import type { GoodsEditPlan } from "@/src/types";
 
 // Filled into the composer (not sent), so the user can adjust before sending.
 const STARTER_PROMPTS = [
-  "检索胃药",
-  "列出当前下架的商品",
-  "把检索结果里第一个商品的价格改成 980",
+  "胃腸薬を検索",
+  "非公開の商品を一覧表示",
+  "検索結果の最初の商品の価格を 980 円に変更",
 ];
 
 export default function Home() {
@@ -136,7 +136,7 @@ export default function Home() {
       )
     ) {
       attachments.setAttachmentError(
-        "图片必须上传成功后才能发送。",
+        "画像のアップロードが完了してから送信してください。",
       );
       return false;
     }
@@ -183,7 +183,7 @@ export default function Home() {
       setAttachmentError("");
       void conversationRef.current?.scrollToBottom();
       void sendMessage(
-        { text: "确认执行" },
+        { text: "確認して実行" },
         {
           body: buildRequestBody(
             confirmation?.previewId
@@ -286,7 +286,7 @@ export default function Home() {
         />
         {sidebarOpen ? (
           <button
-            aria-label="关闭侧边栏"
+            aria-label="サイドバーを閉じる"
             className="fixed inset-0 z-30 bg-ink/20 md:hidden"
             onClick={() => setSidebarOpen(false)}
             type="button"
@@ -296,7 +296,7 @@ export default function Home() {
         <div className="flex min-w-0 flex-1 flex-col bg-surface">
           <header className="flex h-12 shrink-0 items-center gap-2 border-b border-line px-3 md:hidden">
             <button
-              aria-label="打开侧边栏"
+              aria-label="サイドバーを開く"
               className="inline-flex size-8 items-center justify-center rounded-control text-ink-2 transition-colors hover:bg-hover-2 hover:text-ink"
               onClick={() => setSidebarOpen(true)}
               type="button"
@@ -313,7 +313,7 @@ export default function Home() {
 
           <div className="flex min-h-0 w-full flex-1 flex-col py-4 sm:py-6">
             <section
-              aria-label="聊天窗口"
+              aria-label="チャット"
               className="relative flex min-h-0 flex-1 flex-col"
             >
               <Conversation
@@ -326,7 +326,7 @@ export default function Home() {
                       className="text-[18px] font-semibold tracking-tight text-ink"
                       style={{ animation: "fade-up 400ms cubic-bezier(0.23,1,0.32,1) both" }}
                     >
-                      今天要处理什么工作？
+                      今日は何を進めますか？
                     </div>
                     <div className="flex max-w-xl flex-wrap justify-center gap-1.5">
                       {STARTER_PROMPTS.map((prompt, index) => (
@@ -359,10 +359,10 @@ export default function Home() {
                   </PlanActionsProvider>
 
                   {status === "submitted" ? (
-                    <LoadingState label="思考中" />
+                    <LoadingState label="考え中" />
                   ) : null}
                   {showDetachedStreamingStatus ? (
-                    <LoadingState label="正在执行" />
+                    <LoadingState label="実行中" />
                   ) : null}
                 </ConversationContent>
                 <ConversationScrollButton />
@@ -395,10 +395,10 @@ export default function Home() {
                   menuDisabled={isLoading}
                   menuItems={[
                     {
-                      desc: "上传商品图片",
+                      desc: "商品画像をアップロード",
                       icon: <ImageIcon className="size-[15px]" />,
                       key: "image",
-                      name: "图片",
+                      name: "画像",
                       onSelect: () =>
                         attachments.attachmentInputRef.current?.click(),
                     },
@@ -408,16 +408,16 @@ export default function Home() {
                   onDrop={attachments.handlePromptDrop}
                   onStop={stop}
                   onSubmit={handleSubmit}
-                  placeholder="输入指令，例如「检索胃药」"
+                  placeholder="指示を入力（例：「胃腸薬を検索」）"
                   sendDisabled={
                     attachments.isUploadingImages ||
                     attachments.hasAttachmentErrors
                   }
                   sendTitle={
                     attachments.isUploadingImages
-                      ? "图片上传完成后才能发送"
+                      ? "画像のアップロード完了後に送信できます"
                       : attachments.hasAttachmentErrors
-                        ? "请移除上传失败的图片"
+                        ? "アップロードに失敗した画像を削除してください"
                         : undefined
                   }
                   status={status}
@@ -466,7 +466,7 @@ function ErrorBanner({
     >
       <span className="min-w-0 flex-1 break-words">{children}</span>
       <button
-        aria-label="关闭提示"
+        aria-label="通知を閉じる"
         className="-my-0.5 flex size-6 shrink-0 items-center justify-center rounded-[6px] transition-colors hover:bg-red/10"
         onClick={onDismiss}
         type="button"

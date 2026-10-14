@@ -72,8 +72,8 @@ function summarizeInput(name: string, input: unknown): string | undefined {
   switch (name) {
     case "goods_search": {
       const query = typeof input.query === "string" ? input.query.trim() : "";
-      const page = typeof input.page === "number" && input.page > 1 ? ` · 第 ${input.page} 页` : "";
-      return `${query ? `“${query}”` : "全部商品"}${page}`;
+      const page = typeof input.page === "number" && input.page > 1 ? ` · ${input.page} ページ目` : "";
+      return `${query ? `“${query}”` : "すべての商品"}${page}`;
     }
     case "goods_get_editable":
       return input.id !== undefined ? `ID ${String(input.id)}` : undefined;
@@ -87,7 +87,7 @@ function summarizeInput(name: string, input: unknown): string | undefined {
     case "goods_plan_filter_edit": {
       const selector = isRecord(input.selector) ? input.selector : {};
       const query = typeof selector.query === "string" ? selector.query.trim() : "";
-      return query ? `“${query}”` : "按条件";
+      return query ? `“${query}”` : "条件指定";
     }
     default:
       return undefined;
@@ -105,7 +105,7 @@ export function toToolChipStep(part: MessagePart, key: string): ToolChipStep {
     return {
       ...base,
       detail: errorText ? [{ text: errorText, tone: "error" }] : [],
-      label: `${toolLabel(name)}失败`,
+      label: `${toolLabel(name)}に失敗`,
       status: "error",
     };
   }
@@ -119,13 +119,13 @@ export function toToolChipStep(part: MessagePart, key: string): ToolChipStep {
     return {
       ...base,
       detail: output.error ? [{ text: output.error, tone: "error" }] : [],
-      label: `${toolLabel(name)}失败`,
+      label: `${toolLabel(name)}に失敗`,
       status: "error",
     };
   }
 
   if (name === "goods_search" && isEmptySearch(output.data)) {
-    return { ...base, detail: [], label: "未找到匹配商品", status: "done" };
+    return { ...base, detail: [], label: "該当する商品がありません", status: "done" };
   }
 
   return { ...base, detail: [], label: toolCompleteMessage(name), status: "done" };
@@ -139,9 +139,9 @@ export function toolRunHeader(steps: ToolChipStep[]): string | undefined {
   const running = steps.filter((step) => step.status === "running").length;
   const failed = steps.filter((step) => step.status === "error").length;
   return [
-    `${steps.length} 次工具调用`,
-    running > 0 ? `${running} 个进行中` : "",
-    failed > 0 ? `${failed} 个失败` : "",
+    `ツール呼び出し ${steps.length} 回`,
+    running > 0 ? `実行中 ${running} 件` : "",
+    failed > 0 ? `失敗 ${failed} 件` : "",
   ]
     .filter(Boolean)
     .join(" · ");

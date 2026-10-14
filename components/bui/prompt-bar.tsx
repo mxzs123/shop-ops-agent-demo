@@ -222,10 +222,10 @@ export default function PromptBar({
           >
             <button
               type="button"
-              aria-label="添加附件"
+              aria-label="添付を追加"
               aria-expanded={menuOpen}
               disabled={menuDisabled}
-              title={menuDisabled ? "回复生成期间无法添加" : "添加"}
+              title={menuDisabled ? "回答の生成中は追加できません" : "追加"}
               onClick={() => {
                 setMenuOpen((current) => !current);
                 inputRef.current?.focus();
@@ -256,7 +256,7 @@ export default function PromptBar({
                 }
               }}
               placeholder={placeholder}
-              aria-label="消息"
+              aria-label="メッセージ"
               className={`min-h-8 w-full min-w-0 resize-none bg-transparent px-1.5 py-1.5 text-[14px] leading-5 text-ink outline-none [overflow-wrap:anywhere] placeholder:truncate placeholder:text-ink-3 ${
                 expanded ? "col-span-full col-start-1 row-start-1" : "col-start-2 row-start-1"
               }`}
@@ -267,8 +267,8 @@ export default function PromptBar({
               <button
                 key="stop"
                 type="button"
-                aria-label="停止生成"
-                title="停止生成"
+                aria-label="生成を停止"
+                title="生成を停止"
                 onClick={onStop}
                 className={`flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-ink text-surface transition-transform duration-150 active:scale-[0.94] ${
                   expanded ? "col-start-3 row-start-2" : "col-start-3 row-start-1"
@@ -280,7 +280,7 @@ export default function PromptBar({
               <button
                 key="send"
                 type="button"
-                aria-label="发送"
+                aria-label="送信"
                 title={sendTitle}
                 disabled={!canSend}
                 onClick={send}
@@ -299,7 +299,7 @@ export default function PromptBar({
 
           {dragging ? (
             <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-[16px] border-2 border-dashed border-accent bg-surface/90 text-[13px] font-medium text-accent">
-              释放添加图片
+              ドロップして画像を追加
             </div>
           ) : null}
         </div>
